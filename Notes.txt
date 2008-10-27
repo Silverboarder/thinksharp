@@ -1,0 +1,24 @@
+
+ThinkSharp
+==========
+
+ThinkSharp is intended to be a collection of A.I. related libraries written in C#.
+
+The Steering project is a direct port of the opensource code from the "Programming Game AI by Example" book by Mat Buckland.
+The original C++ code is available from the books accompanying website (http://www.wordware.com/files/ai/).
+
+Note on the C# port:
+====================
+
+- No smoothing functionality. The equivalent to the Smoother class has not yet been created.
+- The "params.ini" has been replaced with the SteerParams class that simply contains the variables hard coded for now.
+
+Note on the projects:
+=====================
+
+Currently two projects within the ThinkSharp solution; Steering and TestApp. 
+Plan to add further AI libraries, mainly more ports.
+
+Steering project - The Steering related AI code library.
+TestApp project - An application project used to demonstrate the functionality of the AI libraries. 
+Currently runs on a winform panel, plan to utilise Mogre.
