@@ -9,16 +9,16 @@ namespace ThinkSharp.Steering
         protected List<Vector2D> m_WayPoints;
 
         //points to the current waypoint
-        private IEnumerator<Vector2D> curWaypoint;
+        private IEnumerator<Vector2D> m_curWaypoint;
 
         //flag to indicate if the path should be looped
         //(The last waypoint connected to the first)
         protected bool m_bLooped;
 
-        public Path2D()
+        public Path2D(bool looped)
         {
-            initialise();		
-            m_bLooped = false;
+            initialise();
+            m_bLooped = looped;
         }
 
         public Path2D(int NumWaypoints,
@@ -33,15 +33,12 @@ namespace ThinkSharp.Steering
             m_bLooped = false;
 
 		    CreateRandomPath(NumWaypoints, MinX, MinY, MaxX, MaxY);
-
-            // set the first item ready to go
-            curWaypoint.MoveNext();
 	    }
 
         private void initialise()
         {
             m_WayPoints = new List<Vector2D>();
-            curWaypoint = m_WayPoints.GetEnumerator();
+            m_curWaypoint = m_WayPoints.GetEnumerator();
         }
 
         public void CreateRandomPath(int   NumWaypoints,
@@ -73,22 +70,23 @@ namespace ThinkSharp.Steering
 
                 m_WayPoints.Add(temp);
 
-            }
+            }            
 
-            curWaypoint = m_WayPoints.GetEnumerator();
+            m_curWaypoint = m_WayPoints.GetEnumerator();
+            m_curWaypoint.MoveNext(); // set the first item ready to go
         }
 
 	    //returns the current waypoint
         public Vector2D CurrentWaypoint() 
         {
-            System.Diagnostics.Debug.Assert(curWaypoint != null);
-            return curWaypoint.Current;
+            System.Diagnostics.Debug.Assert(m_curWaypoint != null);
+            return m_curWaypoint.Current;
         }
 
 	    //returns true if the end of the list has been reached
 	    public bool Finished()
         {
-            return (curWaypoint.Current == null);
+            return (Vector2D.IsNull(m_curWaypoint.Current));
         }
 
         public bool Loop
@@ -104,29 +102,29 @@ namespace ThinkSharp.Steering
 	    public void Set(List<Vector2D> new_path)
         {
             m_WayPoints = new_path;
-            curWaypoint = m_WayPoints.GetEnumerator();
+            m_curWaypoint = m_WayPoints.GetEnumerator();
 
-            curWaypoint.MoveNext(); // set the first item ready to go
+            m_curWaypoint.MoveNext(); // set the first item ready to go
         }
 
 	    public void Set(Path2D path)
         {
             m_WayPoints = path.GetPath();
-            curWaypoint = m_WayPoints.GetEnumerator();
+            m_curWaypoint = m_WayPoints.GetEnumerator();
 
-            curWaypoint.MoveNext(); // set the first item ready to go
+            m_curWaypoint.MoveNext(); // set the first item ready to go
         }
 
         public void SetNextWaypoint()
         {
 	        System.Diagnostics.Debug.Assert(m_WayPoints.Count > 0);
 
-            if (!curWaypoint.MoveNext())
+            if (!m_curWaypoint.MoveNext())
             {
                 if (m_bLooped)
                 {
-                    curWaypoint.Reset();
-                    curWaypoint.MoveNext(); // set the first item ready to go
+                    m_curWaypoint.Reset();
+                    m_curWaypoint.MoveNext(); // set the first item ready to go
                 }
             }
         }  

@@ -75,6 +75,8 @@ namespace ThinkSharp.Steering
 
         public List<MovingEntity> ListOfNeighbours() { return m_Neighbors; }
 
+        public List<Cell> ListOfCells() { return m_Cells; }
+
         //given a position in the game space this method determines the relevant cell's index
         private int PositionToIndex(Vector2D pos)
         {
@@ -111,7 +113,7 @@ namespace ThinkSharp.Steering
 
             foreach (Cell curCell in m_Cells)
             {
-                if ((curCell.Members.Count == 0) && curCell.BBox.isOverlappedWith(QueryBox))
+                if ((curCell.Members.Count != 0) && curCell.BBox.isOverlappedWith(QueryBox))
                 {
                     //add any entities found within query radius to the neighbor list
                     foreach (MovingEntity objEntity in curCell.Members)
@@ -147,9 +149,10 @@ namespace ThinkSharp.Steering
         {
             System.Diagnostics.Debug.Assert(ent != null);
 
-            int idx = PositionToIndex(ent.Pos);
+            int NewIdx = PositionToIndex(ent.Pos);
 
-            m_Cells[idx].Members.Add(ent);
+            m_Cells[NewIdx].Members.Add(ent);
+            ent.OldCellID = NewIdx;
         }
 
         //----------------------- UpdateEntity -----------------------------------
@@ -157,21 +160,21 @@ namespace ThinkSharp.Steering
         //  Checks to see if an entity has moved cells. If so the data structure
         //  is updated accordingly
         //------------------------------------------------------------------------
-        public void UpdateEntity(MovingEntity ent, Vector2D OldPos)
+        public void UpdateEntity(MovingEntity ent)
         {
             System.Diagnostics.Debug.Assert(ent != null);
 
-	        //if the index for the old pos and the new pos are not equal then
-	        //the entity has moved to another cell.
-	        int OldIdx = PositionToIndex(OldPos);
 	        int NewIdx = PositionToIndex(ent.Pos);
+            int OldIdx = ent.OldCellID;
 
 	        if (NewIdx == OldIdx) return;
 
 	        //the entity has moved into another cell so delete from current cell
-	        //and add to new one
-	        m_Cells[OldIdx].Members.Remove(ent);
+	        //and add to new one	        
 	        m_Cells[NewIdx].Members.Add(ent);
+            m_Cells[OldIdx].Members.Remove(ent);            
+
+            ent.OldCellID = NewIdx;
         }
 
     } // end class CellSpacePartition

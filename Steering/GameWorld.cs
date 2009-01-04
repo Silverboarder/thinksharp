@@ -30,7 +30,12 @@ namespace ThinkSharp.Steering
         //set true to wrap around
         private bool m_bWrap;
 
+        //is cell space partitioning to be used or not?
+        private bool m_bCellSpaceOn;
+
         private int m_cxClient, m_cyClient;
+
+        private bool m_blnSmoothing;
 
         //keeps a track of the most recent update time. (some of the
         //steering behaviors make use of this - see Wander)
@@ -44,6 +49,8 @@ namespace ThinkSharp.Steering
         {
             m_bPaused = false;
             m_bWrap = false;
+            m_blnSmoothing = true;
+            m_bCellSpaceOn = false;
 
             m_dTimeElapsed = 0.0;
 
@@ -98,7 +105,26 @@ namespace ThinkSharp.Steering
         {
             get { return m_bWrap; }
             set { m_bWrap = value; }
-        } //
+        }
+
+        public bool SpacePartitioningOn
+        {
+            get { return m_bCellSpaceOn; }
+            set { m_bCellSpaceOn = value; }
+        }
+
+        public bool SmoothingOn
+        {
+            get { return m_blnSmoothing; }
+            set 
+            {  
+                m_blnSmoothing = value;
+                foreach (MovingEntity objVehicle in m_Agents)
+                {
+                    objVehicle.ResetSmoothing();
+                }
+            }
+        }        
         
         public int cxClient
         {
@@ -134,9 +160,14 @@ namespace ThinkSharp.Steering
                         Vector2D.WrapAround(objVehicle.Pos, m_cxClient, m_cyClient);
                     }
 
-                    if (objVehicle.Steering().isSpacePartitioningOn())
+                    if (m_bCellSpaceOn)
                     {
-                        m_pCellSpace.UpdateEntity(objVehicle, objVehicle.OldPos);
+                        m_pCellSpace.UpdateEntity(objVehicle);
+                    }
+
+                    if (m_blnSmoothing)
+                    {
+                        objVehicle.PerformSmoothing();
                     }
                 }
             }

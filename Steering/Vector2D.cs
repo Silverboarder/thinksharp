@@ -39,6 +39,7 @@ namespace ThinkSharp.Steering
         #endregion
 
         #region Object
+
         public override bool Equals(object obj)
         {
             if (obj is Vector2D)

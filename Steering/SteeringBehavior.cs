@@ -106,9 +106,6 @@ namespace ThinkSharp.Steering
         //default
         private Deceleration m_Deceleration;
 
-        //is cell space partitioning to be used or not?
-        private bool m_bCellSpaceOn;
-
         //what type of method is used to sum any active behavior
         private summing_method m_SummingMethod;
 
@@ -120,12 +117,12 @@ namespace ThinkSharp.Steering
             m_parentMovingEntity = agent;
             m_iFlags = 0;
             m_dDBoxLength = SteerParams.Instance.MinDetectionBoxLength;
-            m_dWeightCohesion = SteerParams.Instance.CohesionWeight;
-            m_dWeightAlignment = SteerParams.Instance.AlignmentWeight;
-            m_dWeightSeparation = SteerParams.Instance.SeparationWeight;
-            m_dWeightObstacleAvoidance = SteerParams.Instance.ObstacleAvoidanceWeight;
-            m_dWeightWander = SteerParams.Instance.WanderWeight;
-            m_dWeightWallAvoidance = SteerParams.Instance.WallAvoidanceWeight;
+            m_dWeightCohesion = SteerParams.Instance.AppliedCohesionWeight();
+            m_dWeightAlignment = SteerParams.Instance.AppliedAlignmentWeight();
+            m_dWeightSeparation = SteerParams.Instance.AppliedSeparationWeight();
+            m_dWeightObstacleAvoidance = SteerParams.Instance.AppliedObstacleAvoidanceWeight();
+            m_dWeightWander = SteerParams.Instance.AppliedWanderWeight();
+            m_dWeightWallAvoidance = SteerParams.Instance.AppliedWallAvoidanceWeight();
             m_dViewDistance = SteerParams.Instance.ViewDistance;
             m_dWallDetectionFeelerLength = SteerParams.Instance.WallDetectionFeelerLength;
             m_Feelers = new List<Vector2D>(3);
@@ -136,16 +133,15 @@ namespace ThinkSharp.Steering
             m_dWanderJitter = WanderJitterPerSec;
             m_dWanderRadius = WanderRad;
             m_dWaypointSeekDistSq = WaypointSeekDist * WaypointSeekDist;
-            m_dWeightSeek = SteerParams.Instance.SeekWeight;
-            m_dWeightFlee = SteerParams.Instance.FleeWeight;
-            m_dWeightArrive = SteerParams.Instance.ArriveWeight;
-            m_dWeightPursuit = SteerParams.Instance.PursuitWeight;
-            m_dWeightOffsetPursuit = SteerParams.Instance.OffsetPursuitWeight;
-            m_dWeightInterpose = SteerParams.Instance.InterposeWeight;
-            m_dWeightHide = SteerParams.Instance.HideWeight;
-            m_dWeightEvade = SteerParams.Instance.EvadeWeight;
-            m_dWeightFollowPath = SteerParams.Instance.FollowPathWeight;
-            m_bCellSpaceOn = false;
+            m_dWeightSeek = SteerParams.Instance.AppliedSeekWeight();
+            m_dWeightFlee = SteerParams.Instance.AppliedFleeWeight();
+            m_dWeightArrive = SteerParams.Instance.AppliedArriveWeight();
+            m_dWeightPursuit = SteerParams.Instance.AppliedPursuitWeight();
+            m_dWeightOffsetPursuit = SteerParams.Instance.AppliedOffsetPursuitWeight();
+            m_dWeightInterpose = SteerParams.Instance.AppliedInterposeWeight();
+            m_dWeightHide = SteerParams.Instance.AppliedHideWeight();
+            m_dWeightEvade = SteerParams.Instance.AppliedEvadeWeight();
+            m_dWeightFollowPath = SteerParams.Instance.AppliedFollowPathWeight();   
             m_SummingMethod = summing_method.prioritized;
 
             //stuff for the wander behavior
@@ -155,8 +151,7 @@ namespace ThinkSharp.Steering
             m_vWanderTarget = new Vector2D(m_dWanderRadius * Math.Cos(theta), m_dWanderRadius * Math.Sin(theta));
 
             //create a Path
-            m_pPath = new Path2D();
-            m_pPath.Loop = true;
+            m_pPath = new Path2D(true);
 
             m_vSteeringForce = new Vector2D();
 
@@ -169,13 +164,12 @@ namespace ThinkSharp.Steering
         public Vector2D GetOffset() { return m_vOffset; }
 
         public void SetPath(List<Vector2D> new_path) { m_pPath.Set(new_path); }
+        public Path2D GetPath() { return m_pPath; }
+
         public void CreateRandomPath(int num_waypoints, int mx, int my, int cx, int cy)
         { m_pPath.CreateRandomPath(num_waypoints, mx, my, cx, cy); }
 
         public Vector2D Force() { return m_vSteeringForce; }
-
-        public void ToggleSpacePartitioningOnOff() { m_bCellSpaceOn = !m_bCellSpaceOn; }
-        public bool isSpacePartitioningOn() { return m_bCellSpaceOn; }
 
         public void SetSummingMethod(summing_method sm) { m_SummingMethod = sm; }
 
@@ -236,10 +230,23 @@ namespace ThinkSharp.Steering
         public double WanderDistance() { return m_dWanderDistance; }
         public double WanderRadius() { return m_dWanderRadius; }
 
-        public double SeparationWeight() { return m_dWeightSeparation; }
-        public double AlignmentWeight() { return m_dWeightAlignment; }
-        public double CohesionWeight() { return m_dWeightCohesion; }
+        public double SeparationWeight
+        {
+            get { return m_dWeightSeparation; }
+            set { m_dWeightSeparation = value; }
+        }
 
+        public double AlignmentWeight
+        {
+            get { return m_dWeightAlignment; }
+            set { m_dWeightAlignment = value; }
+        }
+
+        public double CohesionWeight
+        {
+            get { return m_dWeightCohesion; }
+            set { m_dWeightCohesion = value; }
+        }
 
         //----------------------- Calculate --------------------------------------
         //
@@ -253,7 +260,7 @@ namespace ThinkSharp.Steering
 
             //use space partitioning to calculate the neighbours of this vehicle
             //if switched on. If not, use the standard tagging system
-            if (!isSpacePartitioningOn())
+            if (!GameWorld.Instance.SpacePartitioningOn)  
             {
                 //tag neighbors if any of the following 3 group behaviors are switched on
                 if (On(behavior_type.separation) || On(behavior_type.allignment) || On(behavior_type.cohesion))
@@ -395,7 +402,7 @@ namespace ThinkSharp.Steering
 
             //these next three can be combined for flocking behavior (wander is
             //also a good behavior to add into this mix)
-            if (!isSpacePartitioningOn())
+            if (!GameWorld.Instance.SpacePartitioningOn)
             {
                 if (On(behavior_type.separation))
                 {
@@ -545,7 +552,7 @@ namespace ThinkSharp.Steering
 
             //these next three can be combined for flocking behavior (wander is
             //also a good behavior to add into this mix)
-            if (!isSpacePartitioningOn())
+            if (!GameWorld.Instance.SpacePartitioningOn)
             {
                 if (On(behavior_type.separation))
                 {
@@ -661,10 +668,10 @@ namespace ThinkSharp.Steering
             //reset the steering force
             m_vSteeringForce.Zero();
 
-            if (On(behavior_type.wall_avoidance) && Utils.RandFloat() < SteerParams.Instance.prWallAvoidance)
+            if (On(behavior_type.wall_avoidance) && Utils.RandFloat() < SteerParams.Instance.PrWallAvoidance)
             {
                 m_vSteeringForce = WallAvoidance(GameWorld.Instance.Walls) *
-                                     m_dWeightWallAvoidance / SteerParams.Instance.prWallAvoidance;
+                                     m_dWeightWallAvoidance / SteerParams.Instance.PrWallAvoidance;
 
                 if (!m_vSteeringForce.isZero())
                 {
@@ -674,10 +681,10 @@ namespace ThinkSharp.Steering
                 }
             }
 
-            if (On(behavior_type.obstacle_avoidance) && Utils.RandFloat() < SteerParams.Instance.prObstacleAvoidance)
+            if (On(behavior_type.obstacle_avoidance) && Utils.RandFloat() < SteerParams.Instance.PrObstacleAvoidance)
             {
                 m_vSteeringForce += ObstacleAvoidance(GameWorld.Instance.Obstacles) *
-                        m_dWeightObstacleAvoidance / SteerParams.Instance.prObstacleAvoidance;
+                        m_dWeightObstacleAvoidance / SteerParams.Instance.PrObstacleAvoidance;
 
                 if (!m_vSteeringForce.isZero())
                 {
@@ -687,12 +694,12 @@ namespace ThinkSharp.Steering
                 }
             }
 
-            if (!isSpacePartitioningOn())
+            if (!GameWorld.Instance.SpacePartitioningOn)
             {
-                if (On(behavior_type.separation) && Utils.RandFloat() < SteerParams.Instance.prSeparation)
+                if (On(behavior_type.separation) && Utils.RandFloat() < SteerParams.Instance.PrSeparation)
                 {
                     m_vSteeringForce += Separation(GameWorld.Instance.Agents) *
-                                        m_dWeightSeparation / SteerParams.Instance.prSeparation;
+                                        m_dWeightSeparation / SteerParams.Instance.PrSeparation;
 
                     if (!m_vSteeringForce.isZero())
                     {
@@ -705,10 +712,10 @@ namespace ThinkSharp.Steering
 
             else
             {
-                if (On(behavior_type.separation) && Utils.RandFloat() < SteerParams.Instance.prSeparation)
+                if (On(behavior_type.separation) && Utils.RandFloat() < SteerParams.Instance.PrSeparation)
                 {
                     m_vSteeringForce += SeparationPlus(GameWorld.Instance.Agents) *
-                                        m_dWeightSeparation / SteerParams.Instance.prSeparation;
+                                        m_dWeightSeparation / SteerParams.Instance.PrSeparation;
 
                     if (!m_vSteeringForce.isZero())
                     {
@@ -720,10 +727,10 @@ namespace ThinkSharp.Steering
             }
 
 
-            if (On(behavior_type.flee) && Utils.RandFloat() < SteerParams.Instance.prFlee)
+            if (On(behavior_type.flee) && Utils.RandFloat() < SteerParams.Instance.PrFlee)
             {
                 System.Diagnostics.Debug.Assert(!Vector2D.IsNull(GameWorld.Instance.TargetPos), "TargetPos not assigned");
-                m_vSteeringForce += Flee(GameWorld.Instance.TargetPos) * m_dWeightFlee / SteerParams.Instance.prFlee;
+                m_vSteeringForce += Flee(GameWorld.Instance.TargetPos) * m_dWeightFlee / SteerParams.Instance.PrFlee;
 
                 if (!m_vSteeringForce.isZero())
                 {
@@ -733,11 +740,11 @@ namespace ThinkSharp.Steering
                 }
             }
 
-            if (On(behavior_type.evade) && Utils.RandFloat() < SteerParams.Instance.prEvade)
+            if (On(behavior_type.evade) && Utils.RandFloat() < SteerParams.Instance.PrEvade)
             {
                 System.Diagnostics.Debug.Assert(m_pTargetAgent1 != null, "Evade target not assigned");
 
-                m_vSteeringForce += Evade(m_pTargetAgent1) * m_dWeightEvade / SteerParams.Instance.prEvade;
+                m_vSteeringForce += Evade(m_pTargetAgent1) * m_dWeightEvade / SteerParams.Instance.PrEvade;
 
                 if (!m_vSteeringForce.isZero())
                 {
@@ -748,12 +755,12 @@ namespace ThinkSharp.Steering
             }
 
 
-            if (!isSpacePartitioningOn())
+            if (!GameWorld.Instance.SpacePartitioningOn)
             {
-                if (On(behavior_type.allignment) && Utils.RandFloat() < SteerParams.Instance.prAlignment)
+                if (On(behavior_type.allignment) && Utils.RandFloat() < SteerParams.Instance.PrAlignment)
                 {
                     m_vSteeringForce += Alignment(GameWorld.Instance.Agents) *
-                                        m_dWeightAlignment / SteerParams.Instance.prAlignment;
+                                        m_dWeightAlignment / SteerParams.Instance.PrAlignment;
 
                     if (!m_vSteeringForce.isZero())
                     {
@@ -763,10 +770,10 @@ namespace ThinkSharp.Steering
                     }
                 }
 
-                if (On(behavior_type.cohesion) && Utils.RandFloat() < SteerParams.Instance.prCohesion)
+                if (On(behavior_type.cohesion) && Utils.RandFloat() < SteerParams.Instance.PrCohesion)
                 {
                     m_vSteeringForce += Cohesion(GameWorld.Instance.Agents) *
-                                        m_dWeightCohesion / SteerParams.Instance.prCohesion;
+                                        m_dWeightCohesion / SteerParams.Instance.PrCohesion;
 
                     if (!m_vSteeringForce.isZero())
                     {
@@ -778,10 +785,10 @@ namespace ThinkSharp.Steering
             }
             else
             {
-                if (On(behavior_type.allignment) && Utils.RandFloat() < SteerParams.Instance.prAlignment)
+                if (On(behavior_type.allignment) && Utils.RandFloat() < SteerParams.Instance.PrAlignment)
                 {
                     m_vSteeringForce += AlignmentPlus(GameWorld.Instance.Agents) *
-                                        m_dWeightAlignment / SteerParams.Instance.prAlignment;
+                                        m_dWeightAlignment / SteerParams.Instance.PrAlignment;
 
                     if (!m_vSteeringForce.isZero())
                     {
@@ -791,10 +798,10 @@ namespace ThinkSharp.Steering
                     }
                 }
 
-                if (On(behavior_type.cohesion) && Utils.RandFloat() < SteerParams.Instance.prCohesion)
+                if (On(behavior_type.cohesion) && Utils.RandFloat() < SteerParams.Instance.PrCohesion)
                 {
                     m_vSteeringForce += CohesionPlus(GameWorld.Instance.Agents) *
-                                        m_dWeightCohesion / SteerParams.Instance.prCohesion;
+                                        m_dWeightCohesion / SteerParams.Instance.PrCohesion;
 
                     if (!m_vSteeringForce.isZero())
                     {
@@ -805,9 +812,9 @@ namespace ThinkSharp.Steering
                 }
             }
 
-            if (On(behavior_type.wander) && Utils.RandFloat() < SteerParams.Instance.prWander)
+            if (On(behavior_type.wander) && Utils.RandFloat() < SteerParams.Instance.PrWander)
             {
-                m_vSteeringForce += Wander() * m_dWeightWander / SteerParams.Instance.prWander;
+                m_vSteeringForce += Wander() * m_dWeightWander / SteerParams.Instance.PrWander;
 
                 if (!m_vSteeringForce.isZero())
                 {
@@ -817,10 +824,10 @@ namespace ThinkSharp.Steering
                 }
             }
 
-            if (On(behavior_type.seek) && Utils.RandFloat() < SteerParams.Instance.prSeek)
+            if (On(behavior_type.seek) && Utils.RandFloat() < SteerParams.Instance.PrSeek)
             {
                 System.Diagnostics.Debug.Assert(!Vector2D.IsNull(GameWorld.Instance.TargetPos), "TargetPos not assigned");
-                m_vSteeringForce += Seek(GameWorld.Instance.TargetPos) * m_dWeightSeek / SteerParams.Instance.prSeek;
+                m_vSteeringForce += Seek(GameWorld.Instance.TargetPos) * m_dWeightSeek / SteerParams.Instance.PrSeek;
 
                 if (!m_vSteeringForce.isZero())
                 {
@@ -830,11 +837,11 @@ namespace ThinkSharp.Steering
                 }
             }
 
-            if (On(behavior_type.arrive) && Utils.RandFloat() < SteerParams.Instance.prArrive)
+            if (On(behavior_type.arrive) && Utils.RandFloat() < SteerParams.Instance.PrArrive)
             {
                 System.Diagnostics.Debug.Assert(!Vector2D.IsNull(GameWorld.Instance.TargetPos), "TargetPos not assigned");
                 m_vSteeringForce += Arrive(GameWorld.Instance.TargetPos, (int)m_Deceleration) *
-                                    m_dWeightArrive / SteerParams.Instance.prArrive;
+                                    m_dWeightArrive / SteerParams.Instance.PrArrive;
 
                 if (!m_vSteeringForce.isZero())
                 {
@@ -1541,7 +1548,6 @@ namespace ThinkSharp.Steering
             {
                 return Seek(m_pPath.CurrentWaypoint());
             }
-
             else
             {
                 return Arrive(m_pPath.CurrentWaypoint(), (int)Deceleration.normal);

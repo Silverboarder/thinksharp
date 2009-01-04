@@ -1040,8 +1040,10 @@ namespace ThinkSharp.Steering
         //  entities. If there is, then the entities are moved away from each
         //  other
         //------------------------------------------------------------------------
-        public static void EnforceNonPenetrationConstraint(BaseGameEntity entity, List<MovingEntity> ContainerOfEntities)
+        public static List<MovingEntity> EnforceNonPenetrationConstraint(BaseGameEntity entity, List<MovingEntity> ContainerOfEntities)
         {
+            List<MovingEntity> ListTouched = new List<MovingEntity>();
+
             //iterate through all entities checking for any overlap of bounding radii
             foreach (MovingEntity curEntity in ContainerOfEntities)
             {
@@ -1060,11 +1062,15 @@ namespace ThinkSharp.Steering
 
                 if (AmountOfOverLap >= 0)
                 {
+                    ListTouched.Add(curEntity);
+
                     //move the entity a distance away equivalent to the amount of overlap.
                     entity.Pos = entity.Pos + (ToEntity / DistFromEachOther) * AmountOfOverLap;
                 }
 
             }//next entity
+
+            return ListTouched;
         }
 
         //-------------------- GetEntityLineSegmentIntersections ----------------------

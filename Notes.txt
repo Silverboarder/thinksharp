@@ -8,17 +8,24 @@ The Steering project is a direct port of the opensource code from the "Programmi
 The original C++ code is available from the books accompanying website (http://www.wordware.com/files/ai/).
 
 Note on the C# port:
-====================
-
-- No smoothing functionality. The equivalent to the Smoother class has not yet been created.
-- The "params.ini" has been replaced with the SteerParams class that simply contains the variables hard coded for now.
+--------------------
+- The original "params.ini" has been replaced with the SteerParams class that simply contains the hard coded variables.
 
 Note on the projects:
-=====================
+---------------------
 
 Currently two projects within the ThinkSharp solution; Steering and TestApp. 
 Plan to add further AI libraries, mainly more ports.
 
 Steering project - The Steering related AI code library.
 TestApp project - An application project used to demonstrate the functionality of the AI libraries. 
-Currently runs on a winform panel, plan to utilise Mogre.
+Currently runs on a winform panel, plan to add another test applicaiton using 3D visuals via Mogre.
+
+Todo:
+-----
+
+- Continue port refinement and make proper use of C# data structures and functionality.
+- Add that third dimension; Replace all 2D with 3D. This should not affect the 2D demos as the z-plane is simply ignored. 
+- Make a test-rig application using Mogre (http://www.ogre3d.org/wiki/index.php/MOGRE) for the rendering.
+- Add further AI ports, including Mat Buckland's "PathFinder" and "State Machines".
+

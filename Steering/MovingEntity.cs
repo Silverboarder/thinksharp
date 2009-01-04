@@ -26,9 +26,16 @@ namespace ThinkSharp.Steering
         protected double m_dMaxTurnRate;
 
         //the steering behavior class
-        protected SteeringBehavior m_pSteering;
+        protected SteeringBehavior m_pSteering;        
 
         protected Vector2D m_OldPos;
+
+        protected int m_intOldCellID;
+
+        private List<Vector2D> m_HeadingHistory;
+        private int m_intNextHeadingSlot;
+
+        private const int NumAccelItems = 5;
 
         public MovingEntity(Vector2D position,
                 double      radius,
@@ -51,7 +58,23 @@ namespace ThinkSharp.Steering
 
             m_OldPos = new Vector2D();
 
-            m_pSteering = new SteeringBehavior(this);  
+            m_intOldCellID = -1;
+
+            m_pSteering = new SteeringBehavior(this);
+
+            m_HeadingHistory = new List<Vector2D>(SteerParams.Instance.NumSamplesForSmoothing);
+            m_intNextHeadingSlot = 0;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is MovingEntity && obj != null)
+            {
+                MovingEntity objMoveingEntity = (MovingEntity)obj;
+                if (objMoveingEntity.ID() == this.ID())
+                    return true;
+            }
+            return false;
         }
 
         //accessors
@@ -61,6 +84,12 @@ namespace ThinkSharp.Steering
         {
             get { return m_OldPos; }
             set { m_OldPos = value; }
+        }
+
+        public int OldCellID
+        {
+            get { return m_intOldCellID; }
+            set { m_intOldCellID = value; }
         } 
 
         public Vector2D Velocity
@@ -176,9 +205,39 @@ namespace ThinkSharp.Steering
             if (m_vVelocity.LengthSq() > 0.00000001)
             {
                 m_vHeading = Vector2D.Vec2DNormalize(m_vVelocity);
-
                 m_vSide = m_vHeading.Perp();
             }
+        }
+
+        public void PerformSmoothing()
+        {
+            //overwrite the oldest value with the newest
+            if (m_HeadingHistory.Count < SteerParams.Instance.NumSamplesForSmoothing)
+                m_HeadingHistory.Add(m_vHeading);
+            else
+                m_HeadingHistory[m_intNextHeadingSlot] = m_vHeading;
+
+            m_intNextHeadingSlot = m_intNextHeadingSlot + 1;
+
+            //make sure m_iNextUpdateSlot wraps around. 
+            if (m_intNextHeadingSlot == SteerParams.Instance.NumSamplesForSmoothing) m_intNextHeadingSlot = 0;
+
+            Vector2D sum = new Vector2D();
+
+            foreach (Vector2D objVec in m_HeadingHistory)
+            {
+                sum = sum + objVec;
+            }
+
+            m_vHeading = sum / (double)m_HeadingHistory.Count;
+            m_vSide = m_vHeading.Perp();
+        }
+
+        public void ResetSmoothing()
+        {
+            m_intNextHeadingSlot = 0;
+            m_HeadingHistory.Clear();
+            m_HeadingHistory = new List<Vector2D>(SteerParams.Instance.NumSamplesForSmoothing);
         }
 
     }
