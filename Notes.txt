@@ -2,6 +2,8 @@
 ThinkSharp
 ==========
 
+Project home page: http://code.google.com/p/thinksharp/
+
 ThinkSharp is intended to be a collection of A.I. related libraries written in C#.
 
 The Steering project is a direct port of the opensource code from the "Programming Game AI by Example" book by Mat Buckland.
