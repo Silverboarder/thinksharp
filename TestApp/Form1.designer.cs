@@ -135,6 +135,7 @@ namespace TestApp
             this.cmboSamples.Name = "cmboSamples";
             this.cmboSamples.Size = new System.Drawing.Size(141, 21);
             this.cmboSamples.TabIndex = 4;
+            this.cmboSamples.SelectedIndexChanged += new System.EventHandler(this.cmboSamples_SelectedIndexChanged);
             // 
             // label8
             // 
@@ -159,6 +160,7 @@ namespace TestApp
             this.cmboUpdate.Name = "cmboUpdate";
             this.cmboUpdate.Size = new System.Drawing.Size(141, 21);
             this.cmboUpdate.TabIndex = 2;
+            this.cmboUpdate.SelectedIndexChanged += new System.EventHandler(this.cmboUpdate_SelectedIndexChanged);
             // 
             // label7
             // 

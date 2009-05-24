@@ -11,6 +11,8 @@ namespace ThinkSharp.Steering
         //a normalized vector pointing in the direction the entity is heading. 
         protected Vector2D m_vHeading;
 
+        protected Vector2D m_vSmoothedHeading;
+
         //a vector perpendicular to the heading vector
         protected Vector2D m_vSide;
 
@@ -57,6 +59,7 @@ namespace ThinkSharp.Steering
             m_vScale = scale;
 
             m_OldPos = new Vector2D();
+            m_vSmoothedHeading = new Vector2D();
 
             m_intOldCellID = -1;
 
@@ -119,6 +122,7 @@ namespace ThinkSharp.Steering
         public double SpeedSq(){return m_vVelocity.LengthSq();}
 
         public Vector2D Heading() {return m_vHeading;}
+        public Vector2D SmoothedHeading() { return m_vSmoothedHeading; }
 
         public double MaxTurnRate
         {
@@ -229,8 +233,7 @@ namespace ThinkSharp.Steering
                 sum = sum + objVec;
             }
 
-            m_vHeading = sum / (double)m_HeadingHistory.Count;
-            m_vSide = m_vHeading.Perp();
+            m_vSmoothedHeading = sum / (double)m_HeadingHistory.Count;
         }
 
         public void ResetSmoothing()

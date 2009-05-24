@@ -552,9 +552,22 @@ namespace TestApp
 
         private void renderVehicle(MovingEntity objVehicle, Graphics objGraphics, Pen objPen)
         {
-            PointF pntLeft = (PointF)(objVehicle.Pos + (objVehicle.Side() * objVehicle.BRadius));
-            PointF pntFront = (PointF)(objVehicle.Pos + (objVehicle.Heading() * (objVehicle.BRadius * 2)));
-            PointF pntRight = (PointF)(objVehicle.Pos - (objVehicle.Side() * objVehicle.BRadius));
+            PointF pntLeft,pntFront,pntRight;
+
+            if (UseSmoothing)
+            {
+                Vector2D SmoothedPerp = objVehicle.SmoothedHeading().Perp();
+
+                pntLeft = (PointF)(objVehicle.Pos + (SmoothedPerp * objVehicle.BRadius));
+                pntFront = (PointF)(objVehicle.Pos + (objVehicle.SmoothedHeading() * (objVehicle.BRadius * 2)));
+                pntRight = (PointF)(objVehicle.Pos - (SmoothedPerp * objVehicle.BRadius));
+            }
+            else
+            {
+                 pntLeft = (PointF)(objVehicle.Pos + (objVehicle.Side() * objVehicle.BRadius));
+                 pntFront = (PointF)(objVehicle.Pos + (objVehicle.Heading() * (objVehicle.BRadius * 2)));
+                 pntRight = (PointF)(objVehicle.Pos - (objVehicle.Side() * objVehicle.BRadius));
+            }
 
             PointF[] points = new PointF[4];
 
