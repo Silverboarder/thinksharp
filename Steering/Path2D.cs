@@ -13,7 +13,7 @@ namespace ThinkSharp.Steering
 
         //flag to indicate if the path should be looped
         //(The last waypoint connected to the first)
-        protected bool m_bLooped;
+        private bool m_bLooped;
 
         public Path2D(bool looped)
         {
@@ -89,6 +89,20 @@ namespace ThinkSharp.Steering
             return (Vector2D.IsNull(m_curWaypoint.Current));
         }
 
+        //returns true if the current target is the final way point
+        public bool Finishing()
+        {
+            if (!Finished())
+            {
+                if (m_curWaypoint.Current == m_WayPoints[m_WayPoints.Count - 1])
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         public bool Loop
         {
             get { return m_bLooped; }
@@ -102,7 +116,7 @@ namespace ThinkSharp.Steering
 	    public void Set(List<Vector2D> new_path)
         {
             m_WayPoints = new_path;
-            m_curWaypoint = m_WayPoints.GetEnumerator();
+            m_curWaypoint = m_WayPoints.GetEnumerator();            
 
             m_curWaypoint.MoveNext(); // set the first item ready to go
         }
@@ -111,6 +125,8 @@ namespace ThinkSharp.Steering
         {
             m_WayPoints = path.GetPath();
             m_curWaypoint = m_WayPoints.GetEnumerator();
+
+            m_bLooped = path.Loop;
 
             m_curWaypoint.MoveNext(); // set the first item ready to go
         }

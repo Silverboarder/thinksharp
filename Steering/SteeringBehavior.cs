@@ -1536,6 +1536,18 @@ namespace ThinkSharp.Steering
         //------------------------------------------------------------------------
         public Vector2D FollowPath()
         {
+            if (m_pPath.Finished())
+            {
+                if (m_pPath.Loop)
+                {
+                    m_pPath.SetNextWaypoint();
+                }
+                else
+                {
+                    return new Vector2D();
+                }
+            }
+
             //move to next target if close enough to current target (working in
             //distance squared space)
             if (Vector2D.Vec2DDistanceSq(m_pPath.CurrentWaypoint(), m_parentMovingEntity.Pos) <
@@ -1544,7 +1556,11 @@ namespace ThinkSharp.Steering
                 m_pPath.SetNextWaypoint();
             }
 
-            if (!m_pPath.Finished())
+            if (m_pPath.Finished())
+            {
+                return new Vector2D();
+            }
+            else if (!m_pPath.Finishing())
             {
                 return Seek(m_pPath.CurrentWaypoint());
             }
@@ -1552,6 +1568,7 @@ namespace ThinkSharp.Steering
             {
                 return Arrive(m_pPath.CurrentWaypoint(), (int)Deceleration.normal);
             }
+            
         }
 
         //------------------------- Offset Pursuit -------------------------------

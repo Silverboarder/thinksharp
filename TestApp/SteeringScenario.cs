@@ -21,9 +21,6 @@ namespace TestApp
 
         private CellSpacePartition m_pCellSpace;
 
-        //any path we may create for the vehicles to follow
-        private Path2D m_pPath;
-
         private Pen objVehiclePen, objDarkPen, objWallPen, objObstaclePen, objTargetPen, objRedPen, objCellPen, objGrayPen, objPathPen;
 
         private int m_intSharkieID, m_intVictimID = 0;
@@ -63,7 +60,7 @@ namespace TestApp
 
             CreateObstacles();
             CreateWalls();            
-            CreatePath();            
+            CreateRandomPath();            
 
             //setup the agents
             for (int a = 0; a < SteerParams.Instance.NumAgents; ++a)
@@ -99,7 +96,6 @@ namespace TestApp
             m_Vehicles[sharkie].Steering().FlockingOff();
             m_Vehicles[sharkie].SetScale(new Vector2D(6, 6));            
             m_Vehicles[sharkie].MaxSpeed = 80;
-            m_Vehicles[sharkie].Steering().GetPath().Set(m_pPath);
 
             m_intSharkieID = m_Vehicles[sharkie].ID();
 
@@ -125,7 +121,8 @@ namespace TestApp
         {
             if (isFollowPathOn())
             {
-                RenderPath2D(m_pPath, objGraphics, objPathPen);
+                MovingEntity objSharkie = getVehicleByID(m_intSharkieID);
+                RenderPath2D(objSharkie.Steering().GetPath(), objGraphics, objPathPen);
             }
 
             foreach (MovingEntity objVehicle in m_Vehicles)
@@ -239,6 +236,67 @@ namespace TestApp
             objSharkie.Steering().ArriveOff();
 
             objSharkie.Steering().FollowPathOn();
+
+            if (objSharkie.Steering().GetPath().Finished())
+            {
+                ReCreatePath();
+            }
+        }
+
+        public void ReCreatePath()
+        {
+            MovingEntity objSharkie = getVehicleByID(m_intSharkieID);
+            objSharkie.Steering().GetPath().Set(CreateRandomPath());
+        }
+
+        private Path2D CreateRandomPath()
+        {
+            Path2D pPath = new Path2D(true);
+
+            List<Vector2D> listWayPoints = new List<Vector2D>();
+
+            int NumWaypoints = 8;
+            double MinX = m_bordersize;
+            double MinY = m_bordersize;
+            double MaxX = m_cxClient - m_bordersize;
+            double MaxY = m_cyClient - m_bordersize;
+
+            double midX = (MaxX + MinX) / 2.0;
+            double midY = (MaxY + MinY) / 2.0;
+
+            double smaller = Math.Min(midX, midY);
+
+            double spacing = Utils.TwoPi / (double)NumWaypoints;
+
+            for (int i = 0; i < NumWaypoints; ++i)
+            {
+                double RadialDist = Utils.RandInRange(smaller * 0.2f, smaller);
+
+                Vector2D temp = new Vector2D(RadialDist, 0.0f);
+
+                Utils.Vec2DRotateAroundOrigin(temp, i * spacing);
+
+                temp.X += midX;
+                temp.Y += midY;
+
+                bool bOverlapped = false;
+
+                foreach (BaseGameEntity objObs in m_Obstacles)
+                {
+                    if (Utils.PointInCircle(objObs.Pos, objObs.BRadius, temp))
+                    {
+                        bOverlapped = true;
+                        break;
+                    }
+                }
+
+                if (!bOverlapped) listWayPoints.Add(temp);
+
+            }
+
+            pPath.Set(listWayPoints);
+
+            return pPath;
         }
 
         public void setNextPursuitTarget()
@@ -287,61 +345,6 @@ namespace TestApp
             }
 
             return null;
-        }
-
-        public void ReCreatePath()
-        {
-            CreatePath();
-            MovingEntity objSharkie = getVehicleByID(m_intSharkieID);
-            objSharkie.Steering().GetPath().Set(m_pPath);
-        }
-
-        private void CreatePath()
-        {
-            m_pPath = new Path2D(true);
-
-            List<Vector2D> listWayPoints = new List<Vector2D>();
-	
-	        int NumWaypoints = 8;
-            double MinX = m_bordersize;
-            double MinY = m_bordersize;
-            double MaxX = m_cxClient - m_bordersize;
-            double MaxY = m_cyClient - m_bordersize;
-
-            double midX = (MaxX+MinX)/2.0;
-            double midY = (MaxY+MinY)/2.0;
-
-            double smaller = Math.Min(midX, midY);
-
-            double spacing = Utils.TwoPi / (double)NumWaypoints;
-
-            for (int i=0; i<NumWaypoints; ++i)
-            {
-                double RadialDist = Utils.RandInRange(smaller*0.2f, smaller);
-
-                Vector2D temp = new Vector2D(RadialDist, 0.0f);
-
-                Utils.Vec2DRotateAroundOrigin(temp, i * spacing);
-
-                temp.X += midX;
-                temp.Y += midY;
-
-                bool bOverlapped = false;
-
-                foreach (BaseGameEntity objObs in m_Obstacles)
-                {
-                    if (Utils.PointInCircle(objObs.Pos, objObs.BRadius, temp))
-                    {
-                        bOverlapped = true;
-                        break;
-                    }
-                }
-
-                if (!bOverlapped) listWayPoints.Add(temp);
-
-            }
-
-            m_pPath.Set(listWayPoints);
         }
 
         //--------------------------- CreateWalls --------------------------------
