@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Steering")]
+[assembly: AssemblyTitle("ThinkSharp.Steering")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Vehnet")]
-[assembly: AssemblyProduct("Steering")]
-[assembly: AssemblyCopyright("Copyright © Vehnet 2008")]
+[assembly: AssemblyCompany("")]
+[assembly: AssemblyProduct("ThinkSharp")]
+[assembly: AssemblyCopyright("")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

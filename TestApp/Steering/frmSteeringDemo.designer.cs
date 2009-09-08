@@ -1,6 +1,6 @@
 namespace TestApp
 {
-    partial class SteeringTestForm
+    partial class frmSteeringDemo
     {
         /// <summary>
         /// Required designer variable.
@@ -396,14 +396,14 @@ namespace TestApp
             this.chkWalls.Text = "Walls";
             this.chkWalls.UseVisualStyleBackColor = true;
             // 
-            // SteeringTestForm
+            // frmSteeringDemo
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(792, 566);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.pnlViewPort);
-            this.Name = "SteeringTestForm";
+            this.Name = "frmSteeringDemo";
             this.Text = "ThinkSharp Steering";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.panel1.ResumeLayout(false);

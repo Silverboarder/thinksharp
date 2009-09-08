@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Diagnostics;
+using ThinkSharp.Common;
 
 namespace ThinkSharp.Steering
 {
@@ -79,7 +81,7 @@ namespace ThinkSharp.Steering
 	    //returns the current waypoint
         public Vector2D CurrentWaypoint() 
         {
-            System.Diagnostics.Debug.Assert(m_curWaypoint != null);
+            Debug.Assert(m_curWaypoint != null);
             return m_curWaypoint.Current;
         }
 
@@ -133,7 +135,7 @@ namespace ThinkSharp.Steering
 
         public void SetNextWaypoint()
         {
-	        System.Diagnostics.Debug.Assert(m_WayPoints.Count > 0);
+	        Debug.Assert(m_WayPoints.Count > 0);
 
             if (!m_curWaypoint.MoveNext())
             {

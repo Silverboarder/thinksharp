@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Diagnostics;
+
+using ThinkSharp.Common;
 
 namespace ThinkSharp.Steering
 {
@@ -384,7 +387,7 @@ namespace ThinkSharp.Steering
 
             if (On(behavior_type.evade))
             {
-                System.Diagnostics.Debug.Assert(m_pTargetAgent1 != null, "Evade target not assigned");
+                Debug.Assert(m_pTargetAgent1 != null, "Evade target not assigned");
 
                 force = Evade(m_pTargetAgent1) * m_dWeightEvade;
 
@@ -393,7 +396,7 @@ namespace ThinkSharp.Steering
 
             if (On(behavior_type.flee))
             {
-                System.Diagnostics.Debug.Assert(!Vector2D.IsNull(GameWorld.Instance.TargetPos), "TargetPos not assigned");
+                Debug.Assert(!Vector2D.IsNull(GameWorld.Instance.TargetPos), "TargetPos not assigned");
 
                 force = Flee(GameWorld.Instance.TargetPos) * m_dWeightFlee;
 
@@ -453,7 +456,7 @@ namespace ThinkSharp.Steering
 
             if (On(behavior_type.seek))
             {
-                System.Diagnostics.Debug.Assert(!Vector2D.IsNull(GameWorld.Instance.TargetPos), "TargetPos not assigned");
+                Debug.Assert(!Vector2D.IsNull(GameWorld.Instance.TargetPos), "TargetPos not assigned");
 
                 force = Seek(GameWorld.Instance.TargetPos) * m_dWeightSeek;
 
@@ -463,7 +466,7 @@ namespace ThinkSharp.Steering
 
             if (On(behavior_type.arrive))
             {
-               System.Diagnostics.Debug.Assert(!Vector2D.IsNull(GameWorld.Instance.TargetPos), "TargetPos not assigned");
+               Debug.Assert(!Vector2D.IsNull(GameWorld.Instance.TargetPos), "TargetPos not assigned");
 
                 force = Arrive(GameWorld.Instance.TargetPos, (int)m_Deceleration) * m_dWeightArrive;
 
@@ -479,7 +482,7 @@ namespace ThinkSharp.Steering
 
             if (On(behavior_type.pursuit))
             {
-                System.Diagnostics.Debug.Assert(m_pTargetAgent1 != null, "pursuit target not assigned");
+                Debug.Assert(m_pTargetAgent1 != null, "pursuit target not assigned");
 
                 force = Pursuit(m_pTargetAgent1) * m_dWeightPursuit;
 
@@ -488,8 +491,8 @@ namespace ThinkSharp.Steering
 
             if (On(behavior_type.offset_pursuit))
             {
-                System.Diagnostics.Debug.Assert(m_pTargetAgent1 != null, "pursuit target not assigned");
-                System.Diagnostics.Debug.Assert(!m_vOffset.isZero(), "No offset assigned");
+                Debug.Assert(m_pTargetAgent1 != null, "pursuit target not assigned");
+                Debug.Assert(!m_vOffset.isZero(), "No offset assigned");
 
                 force = OffsetPursuit(m_pTargetAgent1, m_vOffset);
 
@@ -498,7 +501,7 @@ namespace ThinkSharp.Steering
 
             if (On(behavior_type.interpose))
             {
-                System.Diagnostics.Debug.Assert(m_pTargetAgent1 != null && m_pTargetAgent2 != null, "Interpose agents not assigned");
+                Debug.Assert(m_pTargetAgent1 != null && m_pTargetAgent2 != null, "Interpose agents not assigned");
 
                 force = Interpose(m_pTargetAgent1, m_pTargetAgent2) * m_dWeightInterpose;
 
@@ -507,7 +510,7 @@ namespace ThinkSharp.Steering
 
             if (On(behavior_type.hide))
             {
-                System.Diagnostics.Debug.Assert(m_pTargetAgent1 != null, "Hide target not assigned");
+                Debug.Assert(m_pTargetAgent1 != null, "Hide target not assigned");
 
                 force = Hide(m_pTargetAgent1, GameWorld.Instance.Obstacles) * m_dWeightHide;
 
@@ -545,7 +548,7 @@ namespace ThinkSharp.Steering
 
             if (On(behavior_type.evade))
             {
-                System.Diagnostics.Debug.Assert(m_pTargetAgent1 != null, "Evade target not assigned");
+                Debug.Assert(m_pTargetAgent1 != null, "Evade target not assigned");
 
                 m_vSteeringForce += Evade(m_pTargetAgent1) * m_dWeightEvade;
             }
@@ -595,47 +598,47 @@ namespace ThinkSharp.Steering
 
             if (On(behavior_type.seek))
             {
-                System.Diagnostics.Debug.Assert(!Vector2D.IsNull(GameWorld.Instance.TargetPos), "TargetPos not assigned");
+                Debug.Assert(!Vector2D.IsNull(GameWorld.Instance.TargetPos), "TargetPos not assigned");
                 m_vSteeringForce += Seek(GameWorld.Instance.TargetPos) * m_dWeightSeek;
             }
 
             if (On(behavior_type.flee))
             {
-                System.Diagnostics.Debug.Assert(!Vector2D.IsNull(GameWorld.Instance.TargetPos), "TargetPos not assigned");
+                Debug.Assert(!Vector2D.IsNull(GameWorld.Instance.TargetPos), "TargetPos not assigned");
                 m_vSteeringForce += Flee(GameWorld.Instance.TargetPos) * m_dWeightFlee;
             }
 
             if (On(behavior_type.arrive))
             {
-                System.Diagnostics.Debug.Assert(!Vector2D.IsNull(GameWorld.Instance.TargetPos), "TargetPos not assigned");
+                Debug.Assert(!Vector2D.IsNull(GameWorld.Instance.TargetPos), "TargetPos not assigned");
                 m_vSteeringForce += Arrive(GameWorld.Instance.TargetPos, (int)m_Deceleration) * m_dWeightArrive;
             }
 
             if (On(behavior_type.pursuit))
             {
-                System.Diagnostics.Debug.Assert(m_pTargetAgent1 != null, "pursuit target not assigned");
+                Debug.Assert(m_pTargetAgent1 != null, "pursuit target not assigned");
 
                 m_vSteeringForce += Pursuit(m_pTargetAgent1) * m_dWeightPursuit;
             }
 
             if (On(behavior_type.offset_pursuit))
             {
-                System.Diagnostics.Debug.Assert(m_pTargetAgent1 != null, "pursuit target not assigned");
-                System.Diagnostics.Debug.Assert(!m_vOffset.isZero(), "No offset assigned");
+                Debug.Assert(m_pTargetAgent1 != null, "pursuit target not assigned");
+                Debug.Assert(!m_vOffset.isZero(), "No offset assigned");
 
                 m_vSteeringForce += OffsetPursuit(m_pTargetAgent1, m_vOffset) * m_dWeightOffsetPursuit;
             }
 
             if (On(behavior_type.interpose))
             {
-                System.Diagnostics.Debug.Assert(m_pTargetAgent1 != null && m_pTargetAgent2 != null, "Interpose agents not assigned");
+                Debug.Assert(m_pTargetAgent1 != null && m_pTargetAgent2 != null, "Interpose agents not assigned");
 
                 m_vSteeringForce += Interpose(m_pTargetAgent1, m_pTargetAgent2) * m_dWeightInterpose;
             }
 
             if (On(behavior_type.hide))
             {
-                System.Diagnostics.Debug.Assert(m_pTargetAgent1 != null, "Hide target not assigned");
+                Debug.Assert(m_pTargetAgent1 != null, "Hide target not assigned");
 
                 m_vSteeringForce += Hide(m_pTargetAgent1, GameWorld.Instance.Obstacles) * m_dWeightHide;
             }
@@ -729,7 +732,7 @@ namespace ThinkSharp.Steering
 
             if (On(behavior_type.flee) && Utils.RandFloat() < SteerParams.Instance.PrFlee)
             {
-                System.Diagnostics.Debug.Assert(!Vector2D.IsNull(GameWorld.Instance.TargetPos), "TargetPos not assigned");
+                Debug.Assert(!Vector2D.IsNull(GameWorld.Instance.TargetPos), "TargetPos not assigned");
                 m_vSteeringForce += Flee(GameWorld.Instance.TargetPos) * m_dWeightFlee / SteerParams.Instance.PrFlee;
 
                 if (!m_vSteeringForce.isZero())
@@ -742,7 +745,7 @@ namespace ThinkSharp.Steering
 
             if (On(behavior_type.evade) && Utils.RandFloat() < SteerParams.Instance.PrEvade)
             {
-                System.Diagnostics.Debug.Assert(m_pTargetAgent1 != null, "Evade target not assigned");
+                Debug.Assert(m_pTargetAgent1 != null, "Evade target not assigned");
 
                 m_vSteeringForce += Evade(m_pTargetAgent1) * m_dWeightEvade / SteerParams.Instance.PrEvade;
 
@@ -826,7 +829,7 @@ namespace ThinkSharp.Steering
 
             if (On(behavior_type.seek) && Utils.RandFloat() < SteerParams.Instance.PrSeek)
             {
-                System.Diagnostics.Debug.Assert(!Vector2D.IsNull(GameWorld.Instance.TargetPos), "TargetPos not assigned");
+                Debug.Assert(!Vector2D.IsNull(GameWorld.Instance.TargetPos), "TargetPos not assigned");
                 m_vSteeringForce += Seek(GameWorld.Instance.TargetPos) * m_dWeightSeek / SteerParams.Instance.PrSeek;
 
                 if (!m_vSteeringForce.isZero())
@@ -839,7 +842,7 @@ namespace ThinkSharp.Steering
 
             if (On(behavior_type.arrive) && Utils.RandFloat() < SteerParams.Instance.PrArrive)
             {
-                System.Diagnostics.Debug.Assert(!Vector2D.IsNull(GameWorld.Instance.TargetPos), "TargetPos not assigned");
+                Debug.Assert(!Vector2D.IsNull(GameWorld.Instance.TargetPos), "TargetPos not assigned");
                 m_vSteeringForce += Arrive(GameWorld.Instance.TargetPos, (int)m_Deceleration) *
                                     m_dWeightArrive / SteerParams.Instance.PrArrive;
 

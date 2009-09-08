@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace ThinkSharp.Steering
+namespace ThinkSharp.Common
 {
     public class BaseGameEntity
     {
@@ -31,6 +31,8 @@ namespace ThinkSharp.Steering
 
         //the length of this object's bounding radius
         protected double m_dBoundingRadius;
+
+        public virtual bool HandleMessage(object objTelegram){return false;}
 
         public BaseGameEntity()
         {             

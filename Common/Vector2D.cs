@@ -1,16 +1,15 @@
 
-
 using System;
 using System.Drawing;
 
-namespace ThinkSharp.Steering
+namespace ThinkSharp.Common
 {
     /// <summary>
     /// Summary description for Vector2D.
     /// </summary>
     public class Vector2D
     {
-        private double x, y;        
+        private double x, y;
 
         public Vector2D()
         {

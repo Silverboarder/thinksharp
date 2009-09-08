@@ -4,7 +4,7 @@ using System.Windows.Forms;
 
 namespace TestApp
 {
-    static class Program
+    static class MainSteering
     {
         /// <summary>
         /// The main entry point for the application.
@@ -14,7 +14,7 @@ namespace TestApp
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new SteeringTestForm());
+            Application.Run(new frmSteeringDemo());
         }
     }
 }

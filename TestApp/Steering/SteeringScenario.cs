@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Collections.Generic;
 using System.Text;
 using ThinkSharp.Steering;
+using ThinkSharp.Common;
 
 namespace TestApp
 {
@@ -136,7 +137,7 @@ namespace TestApp
 
                 if (m_blnNonePenetrationOn)
                 {
-                    List<MovingEntity> ListTouched = Utils.EnforceNonPenetrationConstraint(objVehicle, m_Vehicles);
+                    List<MovingEntity> ListTouched = MovingEntity.EnforceNonPenetrationConstraint(objVehicle, m_Vehicles);
 
                     if (ListTouched.Count > 0)
                     {

@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Diagnostics;
+
+using ThinkSharp.Common;
 
 namespace ThinkSharp.Steering
 {
@@ -147,7 +150,7 @@ namespace ThinkSharp.Steering
         //------------------------------------------------------------------------
         public void AddEntity(MovingEntity ent)
         {
-            System.Diagnostics.Debug.Assert(ent != null);
+            Debug.Assert(ent != null);
 
             int NewIdx = PositionToIndex(ent.Pos);
 
@@ -162,7 +165,7 @@ namespace ThinkSharp.Steering
         //------------------------------------------------------------------------
         public void UpdateEntity(MovingEntity ent)
         {
-            System.Diagnostics.Debug.Assert(ent != null);
+            Debug.Assert(ent != null);
 
 	        int NewIdx = PositionToIndex(ent.Pos);
             int OldIdx = ent.OldCellID;

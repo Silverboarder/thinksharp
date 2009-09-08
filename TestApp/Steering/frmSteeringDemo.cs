@@ -7,45 +7,31 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Text;
 using System.Windows.Forms;
+using ThinkSharp.Common;
 
 namespace TestApp
 {
-    public partial class SteeringTestForm : Form
+    public partial class frmSteeringDemo : Form
     {
         private BufferedGraphicsContext mGraphContext;
         private BufferedGraphics mBuffer1;
         private int mIntTime = 0;
         private int mIntMaxTime = 60;
         private Double mDoublePI = 2 * Math.PI;
-        private float m_fltNewX = 0.0F;
-        private float m_fltNewY = 0.0F;
         private Boolean m_blnIsLoading;
         private Font mFont;
-        private System.Windows.Forms.Timer mTimer;
+        private Timer mFormsTimer;
         private SteeringScenario m_objSteeringScenario;
 
-        [DllImport("Kernel32.dll")]
-        private static extern bool QueryPerformanceCounter(out long lpPerformanceCount);
-        [DllImport("Kernel32.dll")]
-        private static extern bool QueryPerformanceFrequency(out long lpFrequency);
-
-        private long startTime;
-        private long stopTime;
-        private long freq;
-
-        public SteeringTestForm()
+        public frmSteeringDemo()
         {
-            InitializeComponent();
-
-            if (QueryPerformanceFrequency(out freq) == false)
-            { throw new Win32Exception(); } // timer not supported
+            InitializeComponent();            
 
             mFont = new Font("Arial", 10);
 
-            mTimer = new System.Windows.Forms.Timer();
-            mTimer.Interval = 30; // 100 milliseconds is a tenth of a second
-
-            mTimer.Tick += new System.EventHandler(this.TimerEventProcessor);
+            mFormsTimer = new System.Windows.Forms.Timer();
+            mFormsTimer.Interval = 30; // 100 milliseconds is a tenth of a second
+            mFormsTimer.Tick += new System.EventHandler(this.TimerEventProcessor);
 
             pnlViewPort.MouseClick += new MouseEventHandler(On_pnlViewPort_Click);
             pnlViewPort.SizeChanged += new EventHandler(On_pnlViewPort_Size);
@@ -76,7 +62,11 @@ namespace TestApp
             cmboUpdate.SelectedIndex = 2;
             cmboSamples.SelectedIndex = 2;            
 
-            ReloadSteeringScenario();
+            ReloadSteeringScenario();            
+
+            mFormsTimer.Start();
+
+            HighResTimer.Instance.Start();
 
             m_objSteeringScenario.setTarget((int)(pnlViewPort.Width * 0.5), (int)(pnlViewPort.Height * 0.5));
             m_objSteeringScenario.setNextPursuitTarget();
@@ -87,7 +77,7 @@ namespace TestApp
         {
             m_blnIsLoading = true;
             
-            mTimer.Stop();
+            mFormsTimer.Stop();
 
             mBuffer1 = mGraphContext.Allocate(pnlViewPort.CreateGraphics(), pnlViewPort.DisplayRectangle);
             mBuffer1.Graphics.CompositingQuality = CompositingQuality.HighQuality;
@@ -121,12 +111,7 @@ namespace TestApp
                 m_objSteeringScenario.SmoothingSamples = int.Parse(cmboSamples.SelectedItem.ToString());
             }
 
-            RefreshGUIChaseMode();
-
-            mTimer.Start();
-
-            QueryPerformanceFrequency(out freq);
-            QueryPerformanceCounter(out startTime);
+            RefreshGUIChaseMode();            
 
             m_blnIsLoading = false;
         }
@@ -149,18 +134,19 @@ namespace TestApp
 
         private void ReDraw()
         {
-            mBuffer1.Graphics.Clear(Color.White);
-
-            // Just draw some text to give feel of current update rate
-            mBuffer1.Graphics.DrawString(mIntTime.ToString(), mFont, Brushes.DimGray, m_fltNewX, m_fltNewY);
+            mBuffer1.Graphics.Clear(Color.White);            
 
             m_objSteeringScenario.Render(mBuffer1.Graphics);
+
+            mBuffer1.Graphics.DrawString(String.Format("FPS: {0}", HighResTimer.Instance.FPS.ToString()), mFont, Brushes.DimGray, 2, 2);
 
             mBuffer1.Render();
         }
 
         private void TimerEventProcessor(Object myObject, EventArgs myEventArgs)
         {
+            HighResTimer.Instance.Update();
+
             mIntTime = mIntTime + 1;
 
             if (mIntTime > mIntMaxTime)
@@ -168,33 +154,16 @@ namespace TestApp
                 mIntTime = 0;
             }
 
-            m_fltNewY = getNormalizedSine(mIntTime, (double)30, mIntMaxTime);
-            m_fltNewX = 30;
-
-            QueryPerformanceCounter(out stopTime);            
-
-            double dt = (double)(stopTime - startTime) / (double)freq;
-
-            QueryPerformanceCounter(out startTime);
-
             if (!chkFixedTime.Checked)
             {
                 m_objSteeringScenario.Update(0.03);
             }
             else
             {
-                m_objSteeringScenario.Update(dt);
+                m_objSteeringScenario.Update(HighResTimer.Instance.ElapsedTime);
             }            
 
             ReDraw();
-        }
-
-        private float getNormalizedSine(int x, double halfY, float maxX)
-        {
-            Double factor = mDoublePI / maxX;
-            Double dblReturn = (Math.Sin(x * factor) * halfY) + halfY;
-
-            return (float)dblReturn;
         }
 
         private void On_pnlViewPort_Click(object sender,MouseEventArgs e)
@@ -297,13 +266,13 @@ namespace TestApp
             {
                 if (cmboUpdate.SelectedItem.ToString() == "None")
                 {
-                    mTimer.Stop();
+                    mFormsTimer.Stop();
                 }
                 else
                 {
-                    mTimer.Stop();
-                    mTimer.Interval = int.Parse(cmboUpdate.SelectedItem.ToString());
-                    mTimer.Start();
+                    mFormsTimer.Stop();
+                    mFormsTimer.Interval = int.Parse(cmboUpdate.SelectedItem.ToString());
+                    mFormsTimer.Start();
                 }
             }
         }

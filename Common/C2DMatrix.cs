@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace ThinkSharp.Steering
+namespace ThinkSharp.Common
 {
-    class C2DMatrix
+    public class C2DMatrix
     {
         private struct Matrix
         {
@@ -136,7 +136,7 @@ namespace ThinkSharp.Steering
         }
 
         //applies a 2D transformation matrix to a single Vector2D
-        public void TransformVector2Ds(Vector2D vPoint)
+        public void TransformVector2D(Vector2D vPoint)
         {
             double tempX = (m_Matrix._11 * vPoint.X) + (m_Matrix._21 * vPoint.Y) + (m_Matrix._31);
             double tempY = (m_Matrix._12 * vPoint.X) + (m_Matrix._22 * vPoint.Y) + (m_Matrix._32);

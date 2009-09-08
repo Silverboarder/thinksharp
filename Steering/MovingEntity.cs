@@ -1,6 +1,10 @@
+
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Diagnostics;
+
+using ThinkSharp.Common;
 
 namespace ThinkSharp.Steering
 {
@@ -157,9 +161,10 @@ namespace ThinkSharp.Steering
 
             //notice how the direction of rotation has to be determined when creating
             //the rotation matrix
-            RotationMatrix.Rotate(angle * m_vHeading.Sign(toTarget));	
-            RotationMatrix.TransformVector2Ds( m_vHeading);
-            RotationMatrix.TransformVector2Ds( m_vVelocity);
+            RotationMatrix.Rotate(angle * m_vHeading.Sign(toTarget));
+
+            RotationMatrix.TransformVector2D(new ThinkSharp.Common.Vector2D(1,1)); //m_vHeading
+            RotationMatrix.TransformVector2D(new ThinkSharp.Common.Vector2D(1, 1)); //m_vVelocity
 
             //finally recreate m_vSide
             m_vSide = m_vHeading.Perp();
@@ -175,7 +180,7 @@ namespace ThinkSharp.Steering
         //-----------------------------------------------------------------------------
         public void SetHeading(Vector2D new_heading)
         {
-            System.Diagnostics.Debug.Assert((new_heading.LengthSq() - 1.0) < 0.00001);
+            Debug.Assert((new_heading.LengthSq() - 1.0) < 0.00001);
 
             m_vHeading = new_heading;
 
@@ -241,6 +246,46 @@ namespace ThinkSharp.Steering
             m_intNextHeadingSlot = 0;
             m_HeadingHistory.Clear();
             m_HeadingHistory = new List<Vector2D>(SteerParams.Instance.NumSamplesForSmoothing);
+        }
+
+        //------------------- EnforceNonPenetrationConstraint ---------------------
+        //
+        //  Given a pointer to an entity and a std container of pointers to nearby
+        //  entities, this function checks to see if there is an overlap between
+        //  entities. If there is, then the entities are moved away from each
+        //  other
+        //------------------------------------------------------------------------
+        public static List<MovingEntity> EnforceNonPenetrationConstraint(BaseGameEntity entity, List<MovingEntity> ContainerOfEntities)
+        {
+            List<MovingEntity> ListTouched = new List<MovingEntity>();
+
+            //iterate through all entities checking for any overlap of bounding radii
+            foreach (MovingEntity curEntity in ContainerOfEntities)
+            {
+                //make sure we don't check against the individual
+                if (curEntity == entity) continue;
+
+                //calculate the distance between the positions of the entities
+                Vector2D ToEntity = entity.Pos - curEntity.Pos;
+
+                double DistFromEachOther = ToEntity.Length();
+
+                //if this distance is smaller than the sum of their radii then this
+                //entity must be moved away in the direction parallel to the
+                //ToEntity vector   
+                double AmountOfOverLap = curEntity.BRadius + entity.BRadius - DistFromEachOther;
+
+                if (AmountOfOverLap >= 0)
+                {
+                    ListTouched.Add(curEntity);
+
+                    //move the entity a distance away equivalent to the amount of overlap.
+                    entity.Pos = entity.Pos + (ToEntity / DistFromEachOther) * AmountOfOverLap;
+                }
+
+            }//next entity
+
+            return ListTouched;
         }
 
     }

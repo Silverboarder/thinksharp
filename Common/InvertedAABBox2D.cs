@@ -3,7 +3,7 @@ using System.Drawing;
 using System.Collections.Generic;
 using System.Text;
 
-namespace ThinkSharp.Steering
+namespace ThinkSharp.Common
 {
     public class InvertedAABBox2D
     {

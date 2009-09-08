@@ -1,8 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Diagnostics;
 
-namespace ThinkSharp.Steering
+namespace ThinkSharp.Common
 {
     public struct Utils
     {
@@ -23,6 +24,14 @@ namespace ThinkSharp.Steering
         public static bool IsZero(double val)
         {
             return ((-Double.MinValue < val) && (val < Double.MinValue));
+        }
+
+        private static float getNormalizedSine(int x, double halfY, float maxX)
+        {
+            Double factor = TwoPi / maxX;
+            Double dblReturn = (Math.Sin(x * factor) * halfY) + halfY;
+
+            return (float)dblReturn;
         }
 
         //returns true if the third parameter is in the range described by the first two
@@ -46,10 +55,11 @@ namespace ThinkSharp.Steering
         //----------------------------------------------------------------------------
 
         //returns a random integer between x and y
-        public static int RandInt(int x, int y)
+        public static int RandInt(int min, int max)
         {
-            System.Diagnostics.Debug.Assert(y >= x, "<RandInt>: y is less than x");
-            return fixRand.Next(x, y);
+            max = max + 1;
+            Debug.Assert(max >= min, "<RandInt>: max is less than min");
+            return fixRand.Next(min, max);
         }
 
         //returns a random double between zero and 1
@@ -262,7 +272,7 @@ namespace ThinkSharp.Steering
             matTransform.Translate(AgentPosition.X, AgentPosition.Y);
 
             //now transform the vertices
-            matTransform.TransformVector2Ds( TransPoint);
+            matTransform.TransformVector2D( TransPoint);
 
             return TransPoint;
         }
@@ -285,7 +295,7 @@ namespace ThinkSharp.Steering
             matTransform.Rotate(AgentHeading, AgentSide);
 
             //now transform the vertices
-            matTransform.TransformVector2Ds( TransVec);
+            matTransform.TransformVector2D( TransVec);
 
             return TransVec;
         }
@@ -315,7 +325,7 @@ namespace ThinkSharp.Steering
             matTransform._31(Tx); matTransform._32(Ty);
 
             //now transform the vertices
-            matTransform.TransformVector2Ds( TransPoint);
+            matTransform.TransformVector2D( TransPoint);
 
             return TransPoint;
         }
@@ -339,7 +349,7 @@ namespace ThinkSharp.Steering
             matTransform._21(AgentHeading.Y); matTransform._22(AgentSide.Y);
 
             //now transform the vertices
-            matTransform.TransformVector2Ds( TransPoint);
+            matTransform.TransformVector2D( TransPoint);
 
             return TransPoint;
         }
@@ -357,7 +367,7 @@ namespace ThinkSharp.Steering
             matTransform.Rotate(ang);
 
             //now transform the object's vertices
-            matTransform.TransformVector2Ds( v);
+            matTransform.TransformVector2D( v);
         }
 
         //------------------------ CreateWhiskers ------------------------------------
@@ -1031,46 +1041,6 @@ namespace ThinkSharp.Steering
             }
 
             return false;
-        }
-
-        //------------------- EnforceNonPenetrationConstraint ---------------------
-        //
-        //  Given a pointer to an entity and a std container of pointers to nearby
-        //  entities, this function checks to see if there is an overlap between
-        //  entities. If there is, then the entities are moved away from each
-        //  other
-        //------------------------------------------------------------------------
-        public static List<MovingEntity> EnforceNonPenetrationConstraint(BaseGameEntity entity, List<MovingEntity> ContainerOfEntities)
-        {
-            List<MovingEntity> ListTouched = new List<MovingEntity>();
-
-            //iterate through all entities checking for any overlap of bounding radii
-            foreach (MovingEntity curEntity in ContainerOfEntities)
-            {
-                //make sure we don't check against the individual
-                if (curEntity == entity) continue;
-
-                //calculate the distance between the positions of the entities
-                Vector2D ToEntity = entity.Pos - curEntity.Pos;
-
-                double DistFromEachOther = ToEntity.Length();
-
-                //if this distance is smaller than the sum of their radii then this
-                //entity must be moved away in the direction parallel to the
-                //ToEntity vector   
-                double AmountOfOverLap = curEntity.BRadius + entity.BRadius - DistFromEachOther;
-
-                if (AmountOfOverLap >= 0)
-                {
-                    ListTouched.Add(curEntity);
-
-                    //move the entity a distance away equivalent to the amount of overlap.
-                    entity.Pos = entity.Pos + (ToEntity / DistFromEachOther) * AmountOfOverLap;
-                }
-
-            }//next entity
-
-            return ListTouched;
         }
 
         //-------------------- GetEntityLineSegmentIntersections ----------------------

@@ -1,12 +1,14 @@
-﻿using System;
+﻿
+using System;
 using System.Collections.Generic;
 using System.Text;
+using ThinkSharp.Common;
 
 namespace ThinkSharp.Steering
-{
+{    
     public sealed class GameWorld
     {
-        private static readonly GameWorld instance = new GameWorld();
+        private static readonly GameWorld instance = new GameWorld(); // A singleton class
 
         public static GameWorld Instance
         {
@@ -173,7 +175,7 @@ namespace ThinkSharp.Steering
             }
         }
 
-        public void NonPenetrationContraint(MovingEntity v) { Utils.EnforceNonPenetrationConstraint(v, m_Agents); }
+        public void NonPenetrationContraint(MovingEntity v) { MovingEntity.EnforceNonPenetrationConstraint(v, m_Agents); }
 
         public void TagAgentsWithinViewRange(BaseGameEntity pEntity, double radius)
         {
