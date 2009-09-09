@@ -45,9 +45,8 @@ namespace TestApp
 
                         wife.GetFSM().ChangeState(new CookStew());
 
-                    }
-
-                    return true;
+                        return true;
+                    }                    
             }
 
             return false;
@@ -117,13 +116,13 @@ namespace TestApp
         public override void Execute(BaseGameEntity pEntity)
         {
             MinersWife wife = (MinersWife)pEntity;
-            DebugMessages.Instance.WriteLine(String.Format("{0}: Ahhhhhh! Sweet relief!", MainSM.GetEntityName(pEntity.ID())));
+            DebugMessages.Instance.WriteLine(String.Format("{0}: Ahhhhhh! Sweet relief! ", MainSM.GetEntityName(pEntity.ID())));
             wife.GetFSM().RevertToPreviousState();
         }
 
         public override void Exit(BaseGameEntity pEntity)
         {
-            DebugMessages.Instance.WriteLine(String.Format("{0}: Leavin' the Jon", MainSM.GetEntityName(pEntity.ID())));
+            DebugMessages.Instance.WriteLine(String.Format("{0}: Leavin' the Jon. Ah better get back to whatever ah wuz doin'", MainSM.GetEntityName(pEntity.ID())));
         }
 
         public override bool OnMessage(BaseGameEntity pEntity, Telegram pTelegram)
@@ -192,9 +191,9 @@ namespace TestApp
 
                         wife.Cooking = false;
                         wife.GetFSM().ChangeState(new DoHouseWork());
-                    }
 
-                    return true;
+                        return true;
+                    }                    
 
             }//end switch
 

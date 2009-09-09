@@ -16,6 +16,9 @@ namespace TestApp
     public partial class frmMinerDemo : Form
     {
         private BackgroundWorker m_AsyncWorker;
+        private Miner Bob;
+        private MinersWife Elsa;
+        private BarFlyJoe Joe;
 
         public frmMinerDemo()
         {
@@ -32,6 +35,18 @@ namespace TestApp
             Debug.Listeners.Clear();
             Debug.Listeners.Add(new TextWriterTraceListener(DebugMessages.Instance));
 
+            //create a miner
+            Bob = new Miner((int)EntityName.ent_Miner_Bob);
+
+            //create his wife
+            Elsa = new MinersWife((int)EntityName.ent_Elsa);
+
+            Joe = new BarFlyJoe((int)EntityName.ent_BarFly);
+
+            //register them with the Message Dispatcher
+            MessageDispatcher.Instance.RegisterEntity(Bob);
+            MessageDispatcher.Instance.RegisterEntity(Elsa);
+            MessageDispatcher.Instance.RegisterEntity(Joe);
         }
 
         private void frmMinerDemo_Load(object sender, EventArgs e)
@@ -45,21 +60,11 @@ namespace TestApp
             // report progress and check for cancellation.
             BackgroundWorker bwAsync = (BackgroundWorker)sender;
 
-            //create a miner
-            Miner Bob = new Miner((int)EntityName.ent_Miner_Bob);
-
-            //create his wife
-            MinersWife Elsa = new MinersWife((int)EntityName.ent_Elsa);
-
-            //register them with the Message Dispatcher
-            MessageDispatcher.Instance.RegisterEntity(Bob);
-            MessageDispatcher.Instance.RegisterEntity(Elsa);
-
             HighResTimer.Instance.Start();
 
             try
             {
-                //run Bob and Elsa through a few Update calls
+                //run Characters through a few Update calls
                 for (int i = 0; i < 40; ++i)
                 {
                     if (bwAsync.CancellationPending)
@@ -69,6 +74,7 @@ namespace TestApp
 
                     Bob.Update();
                     Elsa.Update();
+                    Joe.Update();
 
                     //dispatch any delayed messages
                     MessageDispatcher.Instance.DispatchDelayedMessages();
@@ -116,6 +122,17 @@ namespace TestApp
             {
                 txtUpdates.SelectionColor = Color.Black;
                 txtUpdates.AppendText(Environment.NewLine + "Demo Complete!" + Environment.NewLine);
+            }
+            else
+            {
+                lblLocationBob.Text = MainSM.GetLocation((int)Bob.Location);
+                lblStatusBob.Text = Bob.GetFSM().CurrentState.GetType().Name.ToString();
+
+                lblLocationWife.Text = MainSM.GetLocation((int)Elsa.Location);
+                lblStatusWife.Text = Elsa.GetFSM().CurrentState.GetType().Name.ToString();
+
+                lblLocationBarFly.Text = MainSM.GetLocation((int)Joe.Location);
+                lblStatusBarFly.Text = Joe.GetFSM().CurrentState.GetType().Name.ToString();
             }
         }
 

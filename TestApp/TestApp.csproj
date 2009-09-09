@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.21022</ProductVersion>
+    <ProductVersion>8.0.50727</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{60B701E5-6564-48CC-AD7C-79DC6419539D}</ProjectGuid>
     <OutputType>WinExe</OutputType>
@@ -42,6 +42,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="StateMachines\BarFlyJoe.cs" />
+    <Compile Include="StateMachines\BarFlyJoeStates.cs" />
     <Compile Include="StateMachines\frmMinerDemo.cs">
       <SubType>Form</SubType>
     </Compile>

@@ -14,10 +14,10 @@ namespace TestApp
         public const int MaxNuggets = 3;
 
         //above this value a miner is thirsty
-        public const int ThirstLevel = 5;
+        public const int ThirstLevel = 4;
 
         //above this value a miner is sleepy
-        public const int TirednessThreshold = 5;
+        public const int TirednessThreshold = 3;
 
         private location_type m_Location;
 
@@ -35,8 +35,11 @@ namespace TestApp
         //the higher the value, the more tired the miner
         private int m_iFatigue;
 
-        public Miner(int id)
-            : base(id)
+        public const int HPFull = 4;
+        private int m_iHP;
+
+        public Miner(int entity_type)
+            : base(entity_type, (int)EntityName.ent_Miner_Bob)
         {
             m_Location = location_type.shack;
 
@@ -44,13 +47,14 @@ namespace TestApp
             m_iMoneyInBank = 0;
             m_iThirst = 0;
             m_iFatigue = 0;
+            m_iHP = HPFull;
 
             //set up the state machine
             m_pStateMachine = new StateMachine(this);
 
             m_pStateMachine.CurrentState = new GoHomeAndSleepTilRested();
 
-            /* NOTE, A GLOBAL STATE HAS NOT BEEN IMPLEMENTED FOR THE MINER */
+            m_pStateMachine.GlobalState = new BobsGlobalState();
         }
 
         public StateMachine GetFSM() { return m_pStateMachine; }
@@ -59,6 +63,12 @@ namespace TestApp
         {
             get { return m_Location; }
             set { m_Location = value; }
+        }
+
+        public int HP
+        {
+            get { return m_iHP; }
+            set { m_iHP = value; }
         }
 
         public int GoldCarried
@@ -85,7 +95,7 @@ namespace TestApp
 
         public void DecreaseFatigue()
         {
-            m_iFatigue -= 1;
+            m_iFatigue -= 2;
         }
 
         public void IncreaseFatigue()

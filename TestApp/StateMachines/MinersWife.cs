@@ -14,8 +14,8 @@ namespace TestApp
         //is she presently cooking?
         private bool m_bCooking;
 
-        public MinersWife(int id)
-            : base(id)
+        public MinersWife(int entity_type)
+            : base(entity_type, (int)EntityName.ent_Elsa)
         {
             m_Location = location_type.shack;
             m_bCooking = false;

@@ -5,6 +5,150 @@ using System.Diagnostics;
 
 namespace TestApp
 {
+    public class BobsGlobalState : State
+    {
+        public BobsGlobalState()
+        { }
+
+        public override void Execute(BaseGameEntity pEntity)
+        { }
+
+        public override void Enter(BaseGameEntity pEntity)
+        { }
+
+        public override void Exit(BaseGameEntity pEntity)
+        { }
+
+        public override bool OnMessage(BaseGameEntity pEntity, Telegram pTelegram)
+        {
+            Miner pMiner = (Miner)pEntity;
+
+            switch (pTelegram.Msg)
+            {
+                case (int)message_type.Msg_Antagonize:
+                    {
+                        double CurrentTime = HighResTimer.Instance.RunningTime;
+
+                        DebugMessages.Instance.WriteLine(String.Format("Message handled by {0} at time: {1}", MainSM.GetEntityName(pEntity.ID()), CurrentTime));
+
+                        if (pMiner.Location == location_type.saloon)
+                        {
+                            if (Utils.RandFloat() <= 0.5)
+                            {
+                                MessageDispatcher.Instance.DispatchMessage((int)MessageDispatcher.SEND_MSG_IMMEDIATELY,
+                                                          pEntity.ID(),
+                                                          (int)EntityName.ent_BarFly,
+                                                          (int)message_type.Msg_AcceptFight,
+                                                          (int)MessageDispatcher.NO_ADDITIONAL_INFO);
+
+                                pMiner.GetFSM().ChangeState(new BobFight());
+                            }
+                            else
+                            {
+                                DebugMessages.Instance.WriteLine(String.Format("{0}: No, I can't be bothered to fight you drunken fool!", MainSM.GetEntityName(pEntity.ID())));
+
+                                MessageDispatcher.Instance.DispatchMessage((int)MessageDispatcher.SEND_MSG_IMMEDIATELY,
+                                                          pEntity.ID(),
+                                                          (int)EntityName.ent_BarFly,
+                                                          (int)message_type.Msg_DeclineFight,
+                                                          (int)MessageDispatcher.NO_ADDITIONAL_INFO);
+                            }
+                        }                       
+
+                        return true;
+                    }
+            }
+
+            return false;
+
+        }
+
+    }
+   
+    public class BobFight : State
+    {
+        public BobFight()
+        { }
+
+        public override void Enter(BaseGameEntity pEntity)
+        {            
+            DebugMessages.Instance.WriteLine(String.Format("{0}: Lets get it on!", MainSM.GetEntityName(pEntity.ID())));
+        }
+
+        public override void Execute(BaseGameEntity pEntity)
+        {
+            Miner pMiner = (Miner)pEntity;
+
+            if (pMiner.HP == 1)
+            {
+                DebugMessages.Instance.WriteLine(String.Format("{0}: Dang it, defeated by a drunkard!", MainSM.GetEntityName(pEntity.ID())));
+
+                // Lost fight! Tell Joe we are done.
+                MessageDispatcher.Instance.DispatchMessage((int)MessageDispatcher.SEND_MSG_IMMEDIATELY,
+                                          pEntity.ID(),
+                                          (int)EntityName.ent_BarFly,
+                                          (int)message_type.Msg_DeclineFight,
+                                          (int)MessageDispatcher.NO_ADDITIONAL_INFO);                
+
+                pMiner.GetFSM().RevertToPreviousState();
+            }
+            else
+            {
+                // Throw a punch
+                DebugMessages.Instance.WriteLine(String.Format("{0}: Take this, drunken varmint!", MainSM.GetEntityName(pEntity.ID())));
+
+                MessageDispatcher.Instance.DispatchMessage((int)MessageDispatcher.SEND_MSG_IMMEDIATELY,
+                                          pEntity.ID(),
+                                          (int)EntityName.ent_BarFly,
+                                          (int)message_type.Msg_IncomingPunch,
+                                          (int)MessageDispatcher.NO_ADDITIONAL_INFO);                
+
+            }
+               
+        }
+
+        public override void Exit(BaseGameEntity pEntity)
+        {
+            Miner pMiner = (Miner)pEntity;
+            pMiner.HP = Miner.HPFull;
+        }
+
+        public override bool OnMessage(BaseGameEntity pEntity, Telegram pTelegram)
+        {
+            Miner pMiner = (Miner)pEntity;
+
+            switch (pTelegram.Msg)
+            {
+                case (int)message_type.Msg_IncomingPunch:
+                    {
+                        if (Utils.RandFloat() <= 0.5)
+                        {
+                            pMiner.HP = pMiner.HP - 1;
+
+                            DebugMessages.Instance.WriteLine(String.Format("{0}: Ouch, my nose.", MainSM.GetEntityName(pEntity.ID())));
+                        }
+                        else
+                        {
+                            DebugMessages.Instance.WriteLine(String.Format("{0}: Dodged!", MainSM.GetEntityName(pEntity.ID())));
+                        }
+
+                        return true;
+                    }
+                case (int)message_type.Msg_DeclineFight:
+                    {
+                        DebugMessages.Instance.WriteLine(String.Format("{0}: Yes! Victorious!", MainSM.GetEntityName(pEntity.ID())));
+
+                        pMiner.GetFSM().RevertToPreviousState();
+
+                        return true;
+                    }
+            }
+
+            return false;
+        }
+
+    }
+
     public class EnterMineAndDigForNugget : State
     {
         public EnterMineAndDigForNugget()
@@ -171,14 +315,15 @@ namespace TestApp
             switch (pTelegram.Msg)
             {
                 case (int)message_type.Msg_StewReady:
+                    {
+                        DebugMessages.Instance.WriteLine(String.Format("Message handled by {0} at time {1}", MainSM.GetEntityName(pEntity.ID()), HighResTimer.Instance.RunningTime));
 
-                    DebugMessages.Instance.WriteLine(String.Format("Message handled by {0} at time {1}", MainSM.GetEntityName(pEntity.ID()), HighResTimer.Instance.RunningTime));
+                        DebugMessages.Instance.WriteLine(String.Format("{0}: Okay Hun, ahm a comin'", MainSM.GetEntityName(pEntity.ID())));
 
-                    DebugMessages.Instance.WriteLine(String.Format("{0}: Okay Hun, ahm a comin'", MainSM.GetEntityName(pEntity.ID())));
+                        pMiner.GetFSM().ChangeState(new EatStew());
 
-                    pMiner.GetFSM().ChangeState(new EatStew());
-
-                    return true;
+                        return true;
+                    }
 
             }//end switch
 
@@ -217,7 +362,6 @@ namespace TestApp
 
         public override void Exit(BaseGameEntity pEntity)
         {
-            DebugMessages.Instance.WriteLine(String.Format("{0}: Leaving the saloon, feelin' good", MainSM.GetEntityName(pEntity.ID()))); 
         }
 
         public override bool OnMessage(BaseGameEntity pEntity, Telegram pTelegram)

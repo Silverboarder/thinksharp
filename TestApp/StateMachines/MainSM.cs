@@ -15,7 +15,11 @@ namespace TestApp
     public enum message_type
     {
         Msg_HiHoneyImHome,
-        Msg_StewReady
+        Msg_StewReady,
+        Msg_Antagonize,
+        Msg_DeclineFight,
+        Msg_AcceptFight,
+        Msg_IncomingPunch
     };
 
     public enum EntityName
