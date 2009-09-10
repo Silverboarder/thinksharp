@@ -22,9 +22,9 @@ namespace ThinkSharp.Common
         private long m_lastFPSUpdate;
         private long m_FPSUpdateInterval;
         private uint m_numFrames;
-        private float m_runningTime;
-        private float m_timeElapsed;
-        private float m_fps;
+        private double m_runningTime;
+        private double m_timeElapsed;
+        private double m_fps;
         private bool m_timerStopped;
 
         /// <summary>
@@ -95,16 +95,21 @@ namespace ThinkSharp.Common
             QueryPerformanceCounter(out m_currentTime);
 
             // Update time elapsed since last frame
-            m_timeElapsed = (float)(m_currentTime - m_lastTime) / (float)m_ticksPerSecond;
+            m_timeElapsed = (double)(m_currentTime - m_lastTime) / (double)m_ticksPerSecond;
             m_runningTime += m_timeElapsed;
 
             // Update FPS
             m_numFrames++;
             if (m_currentTime - m_lastFPSUpdate >= m_FPSUpdateInterval)
             {
-                float currentTime = (float)m_currentTime / (float)m_ticksPerSecond;
-                float lastTime = (float)m_lastFPSUpdate / (float)m_ticksPerSecond;
-                m_fps = (float)m_numFrames / (currentTime - lastTime);
+                double newCurrentTime = (double)m_currentTime / (double)m_ticksPerSecond;
+                double lastTime = (double)m_lastFPSUpdate / (double)m_ticksPerSecond;
+                double delta = newCurrentTime - lastTime;
+
+                if (delta > 0)
+                {
+                    m_fps = (double)m_numFrames / delta;
+                }
 
                 m_lastFPSUpdate = m_currentTime;
                 m_numFrames = 0;
@@ -121,13 +126,13 @@ namespace ThinkSharp.Common
         }
 
         /// <summary>Frames per second</summary>
-        public float FPS
+        public double FPS
         {
             get { return m_fps; }
         }
 
         /// <summary>Elapsed time since last update. If the timer is stopped, returns 0.</summary>
-        public float ElapsedTime
+        public double ElapsedTime
         {
             get
             {
@@ -140,7 +145,7 @@ namespace ThinkSharp.Common
         }
 
         /// <summary>Total running time.</summary>
-        public float RunningTime
+        public double RunningTime
         {
             get { return m_runningTime; }
         }

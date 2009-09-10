@@ -20,6 +20,10 @@ namespace TestApp
         private MinersWife Elsa;
         private BarFlyJoe Joe;
 
+        private Color mColourBob = Color.Blue;
+        private Color mColourElsa = Color.DarkViolet;
+        private Color mColourBarFly = Color.Crimson;
+
         public frmMinerDemo()
         {
             InitializeComponent();
@@ -34,6 +38,10 @@ namespace TestApp
             // Just direct all debug output to our Message Writer
             Debug.Listeners.Clear();
             Debug.Listeners.Add(new TextWriterTraceListener(DebugMessages.Instance));
+
+            groupBox1.ForeColor = mColourBob;
+            groupBox2.ForeColor = mColourElsa;
+            groupBox3.ForeColor = mColourBarFly;
 
             //create a miner
             Bob = new Miner((int)EntityName.ent_Miner_Bob);
@@ -100,15 +108,15 @@ namespace TestApp
             {
                 if (strLine.StartsWith(MainSM.GetEntityName((int)EntityName.ent_Miner_Bob)))
                 {
-                    txtUpdates.SelectionColor = Color.Blue;
+                    txtUpdates.SelectionColor = mColourBob;
                 }
                 else if (strLine.StartsWith(MainSM.GetEntityName((int)EntityName.ent_Elsa)))
                 {
-                    txtUpdates.SelectionColor = Color.DarkViolet;
+                    txtUpdates.SelectionColor = mColourElsa;
                 }
                 else if (strLine.StartsWith(MainSM.GetEntityName((int)EntityName.ent_BarFly)))
                 {
-                    txtUpdates.SelectionColor = Color.DarkRed;
+                    txtUpdates.SelectionColor = mColourBarFly;
                 }
                 else
                 {

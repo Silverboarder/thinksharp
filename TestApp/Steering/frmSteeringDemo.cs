@@ -137,7 +137,7 @@ namespace TestApp
 
             m_objSteeringScenario.Render(mBuffer1.Graphics);
 
-            mBuffer1.Graphics.DrawString(String.Format("FPS: {0}", HighResTimer.Instance.FPS.ToString()), mFont, Brushes.DimGray, 2, 2);
+            mBuffer1.Graphics.DrawString(String.Format("FPS: {0}", HighResTimer.Instance.FPS.ToString("0.##")), mFont, Brushes.DimGray, 2, 2);
 
             mBuffer1.Render();
         }
