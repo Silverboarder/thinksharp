@@ -25,6 +25,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestApp", "TestApp\TestApp.
 		Release.AspNetCompiler.Debug = "False"
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PathFinding", "PathFinding\PathFinding.csproj", "{1A7F1482-A0E8-430A-8513-5A58EDAC13B9}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -47,6 +53,10 @@ Global
 		{60B701E5-6564-48CC-AD7C-79DC6419539D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{60B701E5-6564-48CC-AD7C-79DC6419539D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{60B701E5-6564-48CC-AD7C-79DC6419539D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1A7F1482-A0E8-430A-8513-5A58EDAC13B9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1A7F1482-A0E8-430A-8513-5A58EDAC13B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1A7F1482-A0E8-430A-8513-5A58EDAC13B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1A7F1482-A0E8-430A-8513-5A58EDAC13B9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
