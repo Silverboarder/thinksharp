@@ -113,6 +113,8 @@ namespace TestApp
             // chkFixedTime
             // 
             this.chkFixedTime.AutoSize = true;
+            this.chkFixedTime.Checked = true;
+            this.chkFixedTime.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkFixedTime.Location = new System.Drawing.Point(8, 108);
             this.chkFixedTime.Name = "chkFixedTime";
             this.chkFixedTime.Size = new System.Drawing.Size(136, 17);

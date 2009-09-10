@@ -17,7 +17,6 @@ namespace TestApp
         private BufferedGraphics mBuffer1;
         private int mIntTime = 0;
         private int mIntMaxTime = 60;
-        private Double mDoublePI = 2 * Math.PI;
         private Boolean m_blnIsLoading;
         private Font mFont;
         private Timer mFormsTimer;
@@ -60,13 +59,9 @@ namespace TestApp
             mGraphContext = BufferedGraphicsManager.Current;
 
             cmboUpdate.SelectedIndex = 2;
-            cmboSamples.SelectedIndex = 2;            
+            cmboSamples.SelectedIndex = 2;        
 
             ReloadSteeringScenario();            
-
-            mFormsTimer.Start();
-
-            HighResTimer.Instance.Start();
 
             m_objSteeringScenario.setTarget((int)(pnlViewPort.Width * 0.5), (int)(pnlViewPort.Height * 0.5));
             m_objSteeringScenario.setNextPursuitTarget();
@@ -76,8 +71,9 @@ namespace TestApp
         private void ReloadSteeringScenario()
         {
             m_blnIsLoading = true;
-            
-            mFormsTimer.Stop();
+
+            HighResTimer.Instance.Stop();
+            mFormsTimer.Stop();   
 
             mBuffer1 = mGraphContext.Allocate(pnlViewPort.CreateGraphics(), pnlViewPort.DisplayRectangle);
             mBuffer1.Graphics.CompositingQuality = CompositingQuality.HighQuality;
@@ -87,9 +83,7 @@ namespace TestApp
             mBuffer1.Graphics.Clear(Color.White);
 
             m_objSteeringScenario = new SteeringScenario(pnlViewPort.Width, pnlViewPort.Height);           
-            
-            ReDraw();
-
+                        
             m_objSteeringScenario.UseWalls = chkWalls.Checked;
             m_objSteeringScenario.UseObstacles = chkObstacles.Checked;
             m_objSteeringScenario.UseRenderAids = chkRenderAides.Checked;
@@ -111,7 +105,12 @@ namespace TestApp
                 m_objSteeringScenario.SmoothingSamples = int.Parse(cmboSamples.SelectedItem.ToString());
             }
 
-            RefreshGUIChaseMode();            
+            RefreshGUIChaseMode();
+
+            ReDraw();
+
+            mFormsTimer.Start();
+            HighResTimer.Instance.Start();
 
             m_blnIsLoading = false;
         }
@@ -261,7 +260,6 @@ namespace TestApp
         private void cmboUpdate_SelectedIndexChanged(object sender, EventArgs e)
         {
             // None, 10, 30, 60, 100
-
             if (!m_blnIsLoading)
             {
                 if (cmboUpdate.SelectedItem.ToString() == "None")
@@ -279,42 +277,27 @@ namespace TestApp
 
         private void spinMaxForce_ValueChanged(object sender, EventArgs e)
         {
-            if (!m_blnIsLoading)
-            {
-                m_objSteeringScenario.SharkMaxForce = (double)spinMaxForce.Value;
-            }
+            if (!m_blnIsLoading)m_objSteeringScenario.SharkMaxForce = (double)spinMaxForce.Value;
         }
 
         private void spinMaxSpeed_ValueChanged(object sender, EventArgs e)
         {
-            if (!m_blnIsLoading)
-            {
-                m_objSteeringScenario.SharkMaxSpeed = (double)spinMaxSpeed.Value;
-            }
+            if (!m_blnIsLoading) m_objSteeringScenario.SharkMaxSpeed = (double)spinMaxSpeed.Value;
         }
 
         private void spinAlignment_ValueChanged(object sender, EventArgs e)
         {
-            if (!m_blnIsLoading)
-            {
-                m_objSteeringScenario.AlignmentWeight = (double)spinAlignment.Value;
-            }
+            if (!m_blnIsLoading) m_objSteeringScenario.AlignmentWeight = (double)spinAlignment.Value;
         }
 
         private void spinCohesion_ValueChanged(object sender, EventArgs e)
         {
-            if (!m_blnIsLoading)
-            {
-                m_objSteeringScenario.CohesionWeight = (double)spinCohesion.Value;
-            }
+            if (!m_blnIsLoading) m_objSteeringScenario.CohesionWeight = (double)spinCohesion.Value;
         }
 
         private void spinSeparation_ValueChanged(object sender, EventArgs e)
         {
-            if (!m_blnIsLoading)
-            {
-                m_objSteeringScenario.SeparationWeight = (double)spinSeparation.Value;
-            }
+            if (!m_blnIsLoading) m_objSteeringScenario.SeparationWeight = (double)spinSeparation.Value;
         }
         
     }

@@ -144,11 +144,5 @@ namespace ThinkSharp.Common
         {
             get { return m_runningTime; }
         }
-
-        ///// <summary>Total running time in seconds.</summary>
-        //public float RunningTimeInSeconds
-        //{
-        //    get { return m_runningTime * (float)m_ticksPerSecond; }
-        //}
     }
 }
