@@ -76,9 +76,6 @@ namespace TestApp
             mFormsTimer.Stop();   
 
             mBuffer1 = mGraphContext.Allocate(pnlViewPort.CreateGraphics(), pnlViewPort.DisplayRectangle);
-            mBuffer1.Graphics.CompositingQuality = CompositingQuality.HighQuality;
-            mBuffer1.Graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
-            mBuffer1.Graphics.SmoothingMode = SmoothingMode.HighQuality;
 
             mBuffer1.Graphics.Clear(Color.White);
 

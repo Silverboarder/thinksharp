@@ -38,6 +38,10 @@ namespace TestApp
             m_cxClient = cx;
             m_cyClient = cy;
 
+            m_Vehicles.Clear();
+            m_Obstacles.Clear();
+            m_Walls.Clear();
+
             GameWorld.Instance.cxClient = m_cxClient;
             GameWorld.Instance.cyClient = m_cyClient;
 
@@ -152,20 +156,24 @@ namespace TestApp
                     }
                 }               
 
-                renderVehicle(objVehicle, objGraphics, objDrawPen);
+                RenderVehicle(objVehicle, objGraphics, objDrawPen);
 
                 if (m_blnRenderAids)
                {
                    if ((objVehicle.ID() == m_intSharkieID))
                    {
-                       Vector2D vecForce = (Vector2D)(objVehicle.Steering().Force() / SteerParams.Instance.SteeringForceTweaker);
-                       vecForce.X = vecForce.X * objVehicle.Scale().X;
-                       vecForce.Y = vecForce.Y * objVehicle.Scale().Y;
 
-                       objGraphics.DrawLine(objRedPen, (PointF)objVehicle.Pos, (PointF)(objVehicle.Pos + vecForce));
+                           Vector2D vecForce = (Vector2D)(objVehicle.Steering().Force() / SteerParams.Instance.SteeringForceTweaker);
+                           vecForce.X = (vecForce.X * 2) * objVehicle.Scale().X;
+                           vecForce.Y = (vecForce.Y * 2) * objVehicle.Scale().Y;
+
+                           objGraphics.DrawLine(objRedPen, (PointF)objVehicle.Pos, (PointF)(objVehicle.Pos + vecForce));
+
 
                        objGraphics.DrawEllipse(objVehiclePen, (int)(objVehicle.Pos.X - SteerParams.Instance.ViewDistance), (int)(objVehicle.Pos.Y - SteerParams.Instance.ViewDistance),
                            (int)SteerParams.Instance.ViewDistance * 2, (int)SteerParams.Instance.ViewDistance * 2);
+
+                       renderDetectionBox(objVehicle, objGraphics, objVehiclePen);
                    }
                    else if ((objVehicle.ID() == m_intVictimID) && GameWorld.Instance.SpacePartitioningOn && isPursuitOn())
                    {
@@ -253,7 +261,6 @@ namespace TestApp
         private Path2D CreateRandomPath()
         {
             Path2D pPath = new Path2D(true);
-
             List<Vector2D> listWayPoints = new List<Vector2D>();
 
             int NumWaypoints = 8;
@@ -554,7 +561,30 @@ namespace TestApp
             objGraphics.DrawLine(objTargetPen, (int)(objVector2D.X + 4.0), (int)(objVector2D.Y - 4.0), (int)(objVector2D.X - 4.0), (int)(objVector2D.Y + 4.0));
         }
 
-        private void renderVehicle(MovingEntity objVehicle, Graphics objGraphics, Pen objPen)
+        private void renderDetectionBox(MovingEntity objVehicle, Graphics objGraphics, Pen objPen)
+        {
+            List<Vector2D> points = new List<Vector2D>();
+
+            points.Add(new Vector2D(0, objVehicle.BRadius));
+            points.Add(new Vector2D(objVehicle.Steering().DBoxLength(), objVehicle.BRadius));
+            points.Add(new Vector2D(objVehicle.Steering().DBoxLength(), -objVehicle.BRadius));
+            points.Add(new Vector2D(0, -objVehicle.BRadius));
+
+            if (UseSmoothing)
+            {
+                points = Utils.WorldTransform(ref points, objVehicle.Pos, objVehicle.SmoothedHeading(), objVehicle.SmoothedHeading().Perp());
+            }
+            else
+            {
+                points = Utils.WorldTransform(ref points, objVehicle.Pos, objVehicle.Heading(), objVehicle.Side());                
+            }
+
+            objGraphics.DrawLine(objPen, (PointF)points[0], (PointF)points[1]);
+            objGraphics.DrawLine(objPen, (PointF)points[1], (PointF)points[2]);
+            objGraphics.DrawLine(objPen, (PointF)points[2], (PointF)points[3]);
+        }
+
+        private void RenderVehicle(MovingEntity objVehicle, Graphics objGraphics, Pen objPen)
         {
             PointF pntLeft,pntFront,pntRight;
 
@@ -616,7 +646,7 @@ namespace TestApp
         private void RenderObstacle(BaseGameEntity objObstacle, Graphics objGraphics, Pen objPen)
         {
             objGraphics.DrawEllipse(objPen, (int)(objObstacle.Pos.X - objObstacle.BRadius), (int)(objObstacle.Pos.Y - objObstacle.BRadius),
-                (int)objObstacle.BRadius * 2, (int)objObstacle.BRadius * 2);            
+                (int)objObstacle.BRadius * 2, (int)objObstacle.BRadius * 2);          
         }
 
         private void RenderPath2D(Path2D objPath2D, Graphics objGraphics, Pen objPen)

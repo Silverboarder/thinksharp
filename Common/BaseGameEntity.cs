@@ -61,7 +61,7 @@ namespace ThinkSharp.Common
             m_vPos = pos;
             m_vScale = new Vector2D(1.0, 1.0);
             m_EntityType = entity_type;
-            m_bTag = false;                                            
+            m_bTag = false;
         }
 
         //this can be used to create an entity with a 'forced' ID. It can be used

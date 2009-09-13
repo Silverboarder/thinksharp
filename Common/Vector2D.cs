@@ -39,6 +39,11 @@ namespace ThinkSharp.Common
 
         #region Object
 
+        public override int GetHashCode()
+        {
+            return ((int)X ^ (int)Y);
+        }
+
         public override bool Equals(object obj)
         {
             if (obj is Vector2D)
@@ -48,11 +53,6 @@ namespace ThinkSharp.Common
                     return obj.GetType().Equals(this.GetType());
             }
             return false;
-        }
-
-        public override int GetHashCode()
-        {
-            return base.GetHashCode();
         }
 
         public override string ToString()
@@ -120,7 +120,7 @@ namespace ThinkSharp.Common
         //returns true if both x and y are zero
         public bool isZero()
         {
-            return (x*x + y*y) < Double.MinValue;
+            return Math.Abs(x - y) < Double.Epsilon;
         }
 
         //------------------------- Length ---------------------------------------
@@ -129,7 +129,7 @@ namespace ThinkSharp.Common
         //------------------------------------------------------------------------
         public double Length()
         {
-          return Math.Sqrt(x * x + y * y);
+            return Math.Sqrt(x * x + y * y);
         }
 
         //------------------------- LengthSq -------------------------------------
@@ -138,7 +138,7 @@ namespace ThinkSharp.Common
         //------------------------------------------------------------------------
         public double LengthSq()
         {
-          return (x * x + y * y);
+            return (x * x + y * y);
         }
 
         //------------------------- Vec2DDot -------------------------------------
@@ -147,7 +147,7 @@ namespace ThinkSharp.Common
         //------------------------------------------------------------------------
         public double Dot(Vector2D v2)
         {
-          return x * v2.X + y * v2.y;
+            return x * v2.X + y * v2.y;
         }
 
         //------------------------ Sign ------------------------------------------
@@ -155,18 +155,18 @@ namespace ThinkSharp.Common
         //  returns positive if v2 is clockwise of this vector,
         //  minus if anticlockwise (Y axis pointing down, X axis to right)
         //------------------------------------------------------------------------
-        public enum Enum_Sign {clockwise = 1, anticlockwise = -1};
+        public enum Enum_Sign { clockwise = 1, anticlockwise = -1 };
 
         public int Sign(Vector2D v2)
         {
-          if (y*v2.X > x*v2.Y)
-          {
-              return (int)Enum_Sign.anticlockwise;
-          }
-          else 
-          {
-              return (int)Enum_Sign.clockwise;
-          }
+            if (y * v2.X > x * v2.Y)
+            {
+                return (int)Enum_Sign.anticlockwise;
+            }
+            else
+            {
+                return (int)Enum_Sign.clockwise;
+            }
         }
 
         //------------------------------ Perp ------------------------------------
@@ -178,16 +178,40 @@ namespace ThinkSharp.Common
             return new Vector2D(-y, x);
         }
 
+        //------------------------ ProjectedPerp ---------------------------------
+        //
+        //  Returns a vector perpendicular to the origin, projected out by radius
+        //------------------------------------------------------------------------
+        public static Vector2D ProjectedPerp(Vector2D origin, Vector2D DirNormal, double radius, bool swapHand)
+        {
+            Vector2D dir;
+            Vector2D targetLoc = new Vector2D();
+
+            if (swapHand)
+            {
+                dir = new Vector2D(DirNormal.Y, -DirNormal.X);                
+            }
+            else
+            {
+                dir = new Vector2D(-DirNormal.Y, DirNormal.X);
+            }
+
+            targetLoc.X = origin.X + (radius * dir.X);
+            targetLoc.Y = origin.Y + (radius * dir.Y);
+
+            return targetLoc;
+        }
+
         //------------------------------ Distance --------------------------------
         //
         //  calculates the euclidean distance between two vectors
         //------------------------------------------------------------------------
         public double Distance(Vector2D v2)
         {
-          double ySeparation = v2.Y - y;
-          double xSeparation = v2.X - x;
+            double ySeparation = v2.Y - y;
+            double xSeparation = v2.X - x;
 
-          return Math.Sqrt(ySeparation*ySeparation + xSeparation*xSeparation);
+            return Math.Sqrt(ySeparation * ySeparation + xSeparation * xSeparation);
         }
 
         //------------------------------ DistanceSq ------------------------------
@@ -196,10 +220,10 @@ namespace ThinkSharp.Common
         //------------------------------------------------------------------------
         public double DistanceSq(Vector2D v2)
         {
-          double ySeparation = v2.Y - y;
-          double xSeparation = v2.X - x;
+            double ySeparation = v2.Y - y;
+            double xSeparation = v2.X - x;
 
-          return ySeparation*ySeparation + xSeparation*xSeparation;
+            return ySeparation * ySeparation + xSeparation * xSeparation;
         }
 
         //------------------------- Normalize ------------------------------------
@@ -207,7 +231,7 @@ namespace ThinkSharp.Common
         //  normalizes a 2D Vector
         //------------------------------------------------------------------------
         public void Normalize()
-        { 
+        {
             double vector_length = this.Length();
 
             if (vector_length > double.Epsilon)
@@ -228,8 +252,8 @@ namespace ThinkSharp.Common
                 this.Normalize();
                 this.X = this.X * max;
                 this.Y = this.Y * max;
-            } 
-        }        
+            }
+        }
 
         //----------------------- GetReverse ----------------------------------------
         //
@@ -249,13 +273,13 @@ namespace ThinkSharp.Common
         {
             //this += 2.0 * this.Dot(norm) * norm.GetReverse();
 
-            Vector2D vecTemp = norm.GetReverse() * this.Dot(norm) * 2.0;            
+            Vector2D vecTemp = norm.GetReverse() * this.Dot(norm) * 2.0;
 
             this.X = vecTemp.X;
             this.Y = vecTemp.Y;
         }
 
-    #region " non member functions "
+        #region " non member functions "
 
         public static bool IsNull(Vector2D v)
         {
@@ -265,45 +289,35 @@ namespace ThinkSharp.Common
 
         public static Vector2D Vec2DNormalize(Vector2D v)
         {
-          Vector2D vec = new Vector2D(v.X, v.Y);
+            Vector2D vec = new Vector2D(v.X, v.Y);
 
-          double vector_length = vec.Length();
+            double vector_length = vec.Length();
 
-          if (vector_length > double.Epsilon)
-          {
-            vec.X /= vector_length;
-            vec.Y /= vector_length;
-          }
+            if (vector_length > double.Epsilon)
+            {
+                vec.X /= vector_length;
+                vec.Y /= vector_length;
+            }
 
-          return vec;
+            return vec;
         }
 
         public static double Vec2DDistance(Vector2D v1, Vector2D v2)
         {
 
-          double ySeparation = v2.Y - v1.y;
-          double xSeparation = v2.X - v1.x;
+            double ySeparation = v2.Y - v1.y;
+            double xSeparation = v2.X - v1.x;
 
-          return Math.Sqrt(ySeparation*ySeparation + xSeparation*xSeparation);
+            return Math.Sqrt(ySeparation * ySeparation + xSeparation * xSeparation);
         }
 
         public static double Vec2DDistanceSq(Vector2D v1, Vector2D v2)
         {
 
-          double ySeparation = v2.Y - v1.y;
-          double xSeparation = v2.X - v1.x;
+            double ySeparation = v2.Y - v1.y;
+            double xSeparation = v2.X - v1.x;
 
-          return ySeparation*ySeparation + xSeparation*xSeparation;
-        }
-
-        public static double Vec2DLength(Vector2D v)
-        {
-          return Math.Sqrt(v.x*v.X + v.y*v.Y);
-        }
-
-        public static double Vec2DLengthSq(Vector2D v)
-        {
-          return (v.x*v.X + v.y*v.Y);
+            return ySeparation * ySeparation + xSeparation * xSeparation;
         }
 
         //treats a window as a toroid
@@ -327,21 +341,21 @@ namespace ThinkSharp.Common
                                     Vector2D top_left,
                                     Vector2D bot_rgt)
         {
-          return (p.X < top_left.X) || (p.X > bot_rgt.X) || 
-                 (p.Y < top_left.Y) || (p.Y > bot_rgt.Y);
+            return (p.X < top_left.X) || (p.X > bot_rgt.X) ||
+                   (p.Y < top_left.Y) || (p.Y > bot_rgt.Y);
         }
 
         public static bool InsideRegion(Vector2D p,
                                  Vector2D top_left,
                                  Vector2D bot_rgt)
         {
-          return !((p.X < top_left.X) || (p.X > bot_rgt.X) || 
-                 (p.Y < top_left.Y) || (p.Y > bot_rgt.Y));
+            return !((p.X < top_left.X) || (p.X > bot_rgt.X) ||
+                   (p.Y < top_left.Y) || (p.Y > bot_rgt.Y));
         }
 
         public static bool InsideRegion(Vector2D p, int left, int top, int right, int bottom)
         {
-          return !( (p.X < left) || (p.X > right) || (p.Y < top) || (p.Y > bottom) );
+            return !((p.X < left) || (p.X > right) || (p.Y < top) || (p.Y > bottom));
         }
 
         //------------------ isSecondInFOVOfFirst -------------------------------------
@@ -352,14 +366,14 @@ namespace ThinkSharp.Common
         public static bool isSecondInFOVOfFirst(Vector2D posFirst,
                                          Vector2D facingFirst,
                                          Vector2D posSecond,
-                                         double    fov)
+                                         double fov)
         {
-          Vector2D toTarget = Vec2DNormalize(posSecond - posFirst);
+            Vector2D toTarget = Vec2DNormalize(posSecond - posFirst);
 
-          return facingFirst.Dot(toTarget) >= Math.Cos(fov/2.0);
+            return facingFirst.Dot(toTarget) >= Math.Cos(fov / 2.0);
         }
 
-    #endregion        
+        #endregion
 
     }
 }

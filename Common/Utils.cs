@@ -20,12 +20,6 @@ namespace ThinkSharp.Common
             return TwoPi * (degs / 360.0);
         }
 
-        //returns true if the parameter is equal to zero
-        public static bool IsZero(double val)
-        {
-            return ((-Double.MinValue < val) && (val < Double.MinValue));
-        }
-
         private static float getNormalizedSine(int x, double halfY, float maxX)
         {
             Double factor = TwoPi / maxX;

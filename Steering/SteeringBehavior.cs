@@ -144,7 +144,7 @@ namespace ThinkSharp.Steering
             m_dWeightInterpose = SteerParams.Instance.AppliedInterposeWeight();
             m_dWeightHide = SteerParams.Instance.AppliedHideWeight();
             m_dWeightEvade = SteerParams.Instance.AppliedEvadeWeight();
-            m_dWeightFollowPath = SteerParams.Instance.AppliedFollowPathWeight();   
+            m_dWeightFollowPath = SteerParams.Instance.AppliedFollowPathWeight();
             m_SummingMethod = summing_method.prioritized;
 
             //stuff for the wander behavior
@@ -263,7 +263,7 @@ namespace ThinkSharp.Steering
 
             //use space partitioning to calculate the neighbours of this vehicle
             //if switched on. If not, use the standard tagging system
-            if (!GameWorld.Instance.SpacePartitioningOn)  
+            if (!GameWorld.Instance.SpacePartitioningOn)
             {
                 //tag neighbors if any of the following 3 group behaviors are switched on
                 if (On(behavior_type.separation) || On(behavior_type.allignment) || On(behavior_type.cohesion))
@@ -466,7 +466,7 @@ namespace ThinkSharp.Steering
 
             if (On(behavior_type.arrive))
             {
-               Debug.Assert(!Vector2D.IsNull(GameWorld.Instance.TargetPos), "TargetPos not assigned");
+                Debug.Assert(!Vector2D.IsNull(GameWorld.Instance.TargetPos), "TargetPos not assigned");
 
                 force = Arrive(GameWorld.Instance.TargetPos, (int)m_Deceleration) * m_dWeightArrive;
 
@@ -492,7 +492,7 @@ namespace ThinkSharp.Steering
             if (On(behavior_type.offset_pursuit))
             {
                 Debug.Assert(m_pTargetAgent1 != null, "pursuit target not assigned");
-                Debug.Assert(!m_vOffset.isZero(), "No offset assigned");
+                Debug.Assert(!Vector2D.IsNull(m_vOffset), "No offset assigned");
 
                 force = OffsetPursuit(m_pTargetAgent1, m_vOffset);
 
@@ -590,7 +590,6 @@ namespace ThinkSharp.Steering
                 }
             }
 
-
             if (On(behavior_type.wander))
             {
                 m_vSteeringForce += Wander() * m_dWeightWander;
@@ -624,7 +623,7 @@ namespace ThinkSharp.Steering
             if (On(behavior_type.offset_pursuit))
             {
                 Debug.Assert(m_pTargetAgent1 != null, "pursuit target not assigned");
-                Debug.Assert(!m_vOffset.isZero(), "No offset assigned");
+                Debug.Assert(!Vector2D.IsNull(m_vOffset), "No offset assigned");
 
                 m_vSteeringForce += OffsetPursuit(m_pTargetAgent1, m_vOffset) * m_dWeightOffsetPursuit;
             }
@@ -976,7 +975,7 @@ namespace ThinkSharp.Steering
             //uncomment the following two lines to have Evade only consider pursuers 
             //within a 'threat range'
             double ThreatRange = 100.0;
-            if (ToPursuer.LengthSq() > ThreatRange * ThreatRange) return new Vector2D(0.0,0.0);
+            if (ToPursuer.LengthSq() > ThreatRange * ThreatRange) return new Vector2D(0.0, 0.0);
 
             //the lookahead time is propotional to the distance between the pursuer
             //and the pursuer; and is inversely proportional to the sum of the
@@ -1045,7 +1044,7 @@ namespace ThinkSharp.Steering
             double DistToClosestIP = Double.MaxValue;
 
             //this will record the transformed local coordinates of the CIB
-            Vector2D LocalPosOfClosestObstacle = new Vector2D();
+            Vector2D ClosestObstacleLocalPos = new Vector2D();
 
             foreach (BaseGameEntity curOb in obstacles)
             {
@@ -1095,7 +1094,7 @@ namespace ThinkSharp.Steering
 
                                 ClosestIntersectingObstacle = curOb;
 
-                                LocalPosOfClosestObstacle = LocalPos;
+                                ClosestObstacleLocalPos = LocalPos;
                             }
                         }
                     }
@@ -1104,32 +1103,77 @@ namespace ThinkSharp.Steering
 
             //if we have found an intersecting obstacle, calculate a steering 
             //force away from it
-            Vector2D SteeringForce = new Vector2D(0.0,0.0);
+            Vector2D SteeringForce = new Vector2D(0.0, 0.0);
 
             if (ClosestIntersectingObstacle != null)
             {
                 //the closer the agent is to an object, the stronger the 
                 //steering force should be
-                double multiplier = 1.0 + (m_dDBoxLength - LocalPosOfClosestObstacle.X) /
-                                    m_dDBoxLength;
+                double multiplier = 1.0 + (m_dDBoxLength - ClosestObstacleLocalPos.X) / m_dDBoxLength;
 
-                //calculate the lateral force
-                SteeringForce.Y = (ClosestIntersectingObstacle.BRadius -
-                                   LocalPosOfClosestObstacle.Y) * multiplier;
+                //calculate the lateral force                                
+
+                // Check to see if we could use a hint on choosing a more 
+                // efficient direction to turn when avoiding the obstacle
+                Vector2D targetLoc = null;
+
+                if (On(behavior_type.follow_path) && (!m_pPath.Finished()))
+                {
+                    targetLoc = m_pPath.CurrentWaypoint();
+                }
+                else if ((On(behavior_type.seek) || On(behavior_type.arrive)) && (!Vector2D.IsNull(GameWorld.Instance.TargetPos)))
+                {
+                    targetLoc = GameWorld.Instance.TargetPos;
+                }
+                else if ((On(behavior_type.pursuit) || On(behavior_type.offset_pursuit)) && (m_pTargetAgent1 != null))
+                {
+                    targetLoc = m_pTargetAgent1.Pos;
+                }
+
+                if (!Vector2D.IsNull(targetLoc))
+                {
+                    // Get normalised direction to obstacle from current location
+                    Vector2D dirToObs = ClosestIntersectingObstacle.Pos - m_parentMovingEntity.Pos;
+                    dirToObs.Normalize();
+
+                    // Calculate the two "apex choices" on the obstacles sphere
+                    Vector2D interceptRightHand = Vector2D.ProjectedPerp(ClosestIntersectingObstacle.Pos,
+                                                                                    dirToObs,
+                                                                                    ClosestIntersectingObstacle.BRadius,
+                                                                                    false);
+
+                    Vector2D interceptLeftHand = Vector2D.ProjectedPerp(ClosestIntersectingObstacle.Pos,
+                                                                                    dirToObs,
+                                                                                    ClosestIntersectingObstacle.BRadius,
+                                                                                    true);
+
+                    // Calculate and compare the distances to determine the preferred "side" of the sphere.
+                    double distRightHand = interceptRightHand.DistanceSq(targetLoc);
+                    double distLeftHand = interceptLeftHand.DistanceSq(targetLoc);
+
+                    if (distLeftHand < distRightHand)
+                    {
+                        multiplier = multiplier * -1; // We will travel on the left hand side of the sphere.
+                    }
+                }
+
+                SteeringForce.Y = ClosestIntersectingObstacle.BRadius * multiplier;
 
                 //apply a braking force proportional to the obstacles distance from
                 //the vehicle. 
                 double BrakingWeight = 0.2;
 
                 SteeringForce.X = (ClosestIntersectingObstacle.BRadius -
-                                   LocalPosOfClosestObstacle.X) *
+                                   ClosestObstacleLocalPos.X) *
                                    BrakingWeight;
             }
 
             //finally, convert the steering vector from local to world space
-            return Utils.VectorToWorldSpace(SteeringForce,
+            Vector2D vecReturn = Utils.VectorToWorldSpace(SteeringForce,
                                       m_parentMovingEntity.Heading(),
                                       m_parentMovingEntity.Side());
+
+            return vecReturn;
         }
 
 
@@ -1225,7 +1269,7 @@ namespace ThinkSharp.Steering
         //------------------------------------------------------------------------
         public Vector2D Separation(List<MovingEntity> neighbors)
         {
-            Vector2D SteeringForce = new Vector2D(0.0,0.0);
+            Vector2D SteeringForce = new Vector2D(0.0, 0.0);
 
             foreach (MovingEntity neighbor in neighbors)
             {
@@ -1253,36 +1297,36 @@ namespace ThinkSharp.Steering
         //------------------------------------------------------------------------
         public Vector2D Alignment(List<MovingEntity> neighbors)
         {
-          //used to record the average heading of the neighbors
+            //used to record the average heading of the neighbors
             Vector2D AverageHeading = new Vector2D(0.0, 0.0);
 
-          //used to count the number of vehicles in the neighborhood
-          int    NeighborCount = 0;
+            //used to count the number of vehicles in the neighborhood
+            int NeighborCount = 0;
 
-          //iterate through all the tagged vehicles and sum their heading vectors  
-          foreach (MovingEntity neighbor in neighbors)
-          {
-            //make sure *this* agent isn't included in the calculations and that
-            //the agent being examined  is close enough ***also make sure it doesn't
-            //include any evade target ***
-              if ((neighbor != m_parentMovingEntity) && neighbor.IsTagged() &&
-              (neighbor != m_pTargetAgent1))
+            //iterate through all the tagged vehicles and sum their heading vectors  
+            foreach (MovingEntity neighbor in neighbors)
             {
-                AverageHeading += neighbor.Heading();
+                //make sure *this* agent isn't included in the calculations and that
+                //the agent being examined  is close enough ***also make sure it doesn't
+                //include any evade target ***
+                if ((neighbor != m_parentMovingEntity) && neighbor.IsTagged() &&
+                (neighbor != m_pTargetAgent1))
+                {
+                    AverageHeading += neighbor.Heading();
 
-              ++NeighborCount;
+                    ++NeighborCount;
+                }
             }
-          }
 
-          //if the neighborhood contained one or more vehicles, average their heading vectors.
-          if (NeighborCount > 0)
-          {
-            AverageHeading /= (double)NeighborCount;
+            //if the neighborhood contained one or more vehicles, average their heading vectors.
+            if (NeighborCount > 0)
+            {
+                AverageHeading /= (double)NeighborCount;
 
-            AverageHeading -= m_parentMovingEntity.Heading();
-          }
-          
-          return AverageHeading;
+                AverageHeading -= m_parentMovingEntity.Heading();
+            }
+
+            return AverageHeading;
         }
 
         //-------------------------------- Cohesion ------------------------------
@@ -1292,39 +1336,39 @@ namespace ThinkSharp.Steering
         //------------------------------------------------------------------------
         public Vector2D Cohesion(List<MovingEntity> neighbors)
         {
-          //first find the center of mass of all the agents
-          Vector2D CenterOfMass = new Vector2D(0.0, 0.0);
-          Vector2D SteeringForce = new Vector2D(0.0, 0.0);
+            //first find the center of mass of all the agents
+            Vector2D CenterOfMass = new Vector2D(0.0, 0.0);
+            Vector2D SteeringForce = new Vector2D(0.0, 0.0);
 
-          int NeighborCount = 0;
+            int NeighborCount = 0;
 
-          //iterate through the neighbors and sum up all the position vectors
-          foreach (MovingEntity neighbor in neighbors)
-          {
-            //make sure *this* agent isn't included in the calculations and that
-            //the agent being examined is close enough ***also make sure it doesn't
-            //include the evade target ***
-              if ((neighbor != m_parentMovingEntity) && neighbor.IsTagged() &&
-                (neighbor != m_pTargetAgent1))
+            //iterate through the neighbors and sum up all the position vectors
+            foreach (MovingEntity neighbor in neighbors)
             {
-                CenterOfMass += neighbor.Pos;
+                //make sure *this* agent isn't included in the calculations and that
+                //the agent being examined is close enough ***also make sure it doesn't
+                //include the evade target ***
+                if ((neighbor != m_parentMovingEntity) && neighbor.IsTagged() &&
+                  (neighbor != m_pTargetAgent1))
+                {
+                    CenterOfMass += neighbor.Pos;
 
-              ++NeighborCount;
+                    ++NeighborCount;
+                }
             }
-          }
 
-          if (NeighborCount > 0)
-          {
-            //the center of mass is the average of the sum of positions
-            CenterOfMass /= (double)NeighborCount;
+            if (NeighborCount > 0)
+            {
+                //the center of mass is the average of the sum of positions
+                CenterOfMass /= (double)NeighborCount;
 
-            //now seek towards that position
-            SteeringForce = Seek(CenterOfMass);
-          }
+                //now seek towards that position
+                SteeringForce = Seek(CenterOfMass);
+            }
 
-          //the magnitude of cohesion is usually much larger than separation or
-          //allignment so it usually helps to normalize it.
-          return Vector2D.Vec2DNormalize(SteeringForce);
+            //the magnitude of cohesion is usually much larger than separation or
+            //allignment so it usually helps to normalize it.
+            return Vector2D.Vec2DNormalize(SteeringForce);
         }
 
 
@@ -1477,35 +1521,35 @@ namespace ThinkSharp.Steering
         //------------------------------------------------------------------------
         public Vector2D Hide(MovingEntity hunter, List<BaseGameEntity> obstacles)
         {
-          double    DistToClosest = Double.MaxValue;
-          Vector2D BestHidingSpot = new Vector2D(0.0,0.0);
+            double DistToClosest = Double.MaxValue;
+            Vector2D BestHidingSpot = new Vector2D(0.0, 0.0);
 
-        foreach (BaseGameEntity curOb in obstacles)
-          {
-            //calculate the position of the hiding spot for this obstacle
-            Vector2D HidingSpot = GetHidingPosition(curOb.Pos, curOb.BRadius, hunter.Pos);
-                    
-            //work in distance-squared space to find the closest hiding
-            //spot to the agent
-            double dist = Vector2D.Vec2DDistanceSq(HidingSpot, m_parentMovingEntity.Pos);
-
-            if (dist < DistToClosest)
+            foreach (BaseGameEntity curOb in obstacles)
             {
-              DistToClosest = dist;
+                //calculate the position of the hiding spot for this obstacle
+                Vector2D HidingSpot = GetHidingPosition(curOb.Pos, curOb.BRadius, hunter.Pos);
 
-              BestHidingSpot = HidingSpot;
-            }  
-                    
-          }//end while
-          
-          //if no suitable obstacles found then Evade the hunter
-        if (DistToClosest == Double.MaxValue)
-          {
-            return Evade(hunter);
-          }
-              
-          //else use Arrive on the hiding spot
-        return Arrive(BestHidingSpot, (int)Deceleration.fast);
+                //work in distance-squared space to find the closest hiding
+                //spot to the agent
+                double dist = Vector2D.Vec2DDistanceSq(HidingSpot, m_parentMovingEntity.Pos);
+
+                if (dist < DistToClosest)
+                {
+                    DistToClosest = dist;
+
+                    BestHidingSpot = HidingSpot;
+                }
+
+            }//end while
+
+            //if no suitable obstacles found then Evade the hunter
+            if (DistToClosest == Double.MaxValue)
+            {
+                return Evade(hunter);
+            }
+
+            //else use Arrive on the hiding spot
+            return Arrive(BestHidingSpot, (int)Deceleration.fast);
         }
 
         //------------------------- GetHidingPosition ----------------------------
@@ -1571,7 +1615,7 @@ namespace ThinkSharp.Steering
             {
                 return Arrive(m_pPath.CurrentWaypoint(), (int)Deceleration.normal);
             }
-            
+
         }
 
         //------------------------- Offset Pursuit -------------------------------

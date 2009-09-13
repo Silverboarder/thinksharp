@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using ThinkSharp.Common;
 
 namespace ThinkSharp.Steering
 {
@@ -448,7 +449,7 @@ namespace ThinkSharp.Steering
             m_ViewDistance = 50.0;
 
             //used in obstacle avoidance
-            m_MinDetectionBoxLength = 40.0;
+            m_MinDetectionBoxLength = 30.0;
 
             //used in wall avoidance
             m_WallDetectionFeelerLength = 40.0;
@@ -468,7 +469,7 @@ namespace ThinkSharp.Steering
             m_prHide = 0.8f;
             m_prArrive = 0.5f;
 
-            m_MaxTurnRatePerSecond = Math.PI;
+            m_MaxTurnRatePerSecond = Utils.DegsToRads(45);
         }
 
 
