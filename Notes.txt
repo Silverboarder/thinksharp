@@ -6,7 +6,7 @@ Project home page: http://code.google.com/p/thinksharp/
 
 ThinkSharp is intended to be a collection of A.I. related libraries written in C#.
 
-The Steering project is a direct port of the opensource code from the "Programming Game AI by Example" book by Mat Buckland.
+All current projects are direct ports of the opensource code from the "Programming Game AI by Example" book by Mat Buckland.
 The original C++ code is available from the books accompanying website (http://www.wordware.com/files/ai/).
 
 Note on the C# port:
@@ -16,18 +16,25 @@ Note on the C# port:
 Note on the projects:
 ---------------------
 
-Currently two projects within the ThinkSharp solution; Steering and TestApp. 
-Plan to add further AI libraries, mainly more ports.
+There are currently five projects within the ThinkSharp solution:
 
-Steering project - The Steering related AI code library.
+Common - Contains all the shared AI functions and classes.
+PathFinding - Work in progress port of Mat's pathfinding library.
+StateMachines - Classes and managers for Finite State Machines.
+Steering project - The Steering behaviour related code library.
 TestApp project - An application project used to demonstrate the functionality of the AI libraries. 
-Currently runs on a winform panel, plan to add another test applicaiton using 3D visuals via Mogre.
+
+I plan to add further AI libraries over time; all planned are further ports of Mat's code.
 
 Todo:
 -----
 
 - Continue port refinement and make proper use of C# data structures and functionality.
 - Add that third dimension; Replace all 2D with 3D. This should not affect the 2D demos as the z-plane is simply ignored. 
-- Make a test-rig application using Mogre (http://www.ogre3d.org/wiki/index.php/MOGRE) for the rendering.
-- Add further AI ports, including Mat Buckland's "PathFinder" and "State Machines".
+- Make a demo Steering application using Mogre (http://www.ogre3d.org/wiki/index.php/MOGRE) for the rendering.
+- Add further AI ports, initially more of Mat Buckland's code ported to C#.
 
+
+=======
+Paul D.
+=======
