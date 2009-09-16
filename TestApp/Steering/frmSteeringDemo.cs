@@ -21,12 +21,15 @@ namespace TestApp
         private Font mFont;
         private Timer mFormsTimer;
         private SteeringScenario m_objSteeringScenario;
+        private HighResTimer mHighResTimer;
 
         public frmSteeringDemo()
         {
             InitializeComponent();            
 
             mFont = new Font("Arial", 10);
+
+            mHighResTimer = new HighResTimer();
 
             mFormsTimer = new System.Windows.Forms.Timer();
             mFormsTimer.Interval = 30; // 100 milliseconds is a tenth of a second
@@ -72,7 +75,7 @@ namespace TestApp
         {
             m_blnIsLoading = true;
 
-            HighResTimer.Instance.Stop();
+            mHighResTimer.Stop();
             mFormsTimer.Stop();   
 
             mBuffer1 = mGraphContext.Allocate(pnlViewPort.CreateGraphics(), pnlViewPort.DisplayRectangle);
@@ -107,7 +110,7 @@ namespace TestApp
             ReDraw();
 
             mFormsTimer.Start();
-            HighResTimer.Instance.Start();
+            mHighResTimer.Start();
 
             m_blnIsLoading = false;
         }
@@ -134,14 +137,14 @@ namespace TestApp
 
             m_objSteeringScenario.Render(mBuffer1.Graphics);
 
-            mBuffer1.Graphics.DrawString(String.Format("FPS: {0}", HighResTimer.Instance.FPS.ToString("0.##")), mFont, Brushes.DimGray, 2, 2);
+            mBuffer1.Graphics.DrawString(String.Format("FPS: {0}", mHighResTimer.FPS.ToString("0.##")), mFont, Brushes.DimGray, 2, 2);
 
             mBuffer1.Render();
         }
 
         private void TimerEventProcessor(Object myObject, EventArgs myEventArgs)
         {
-            HighResTimer.Instance.Update();
+            mHighResTimer.Update();
 
             mIntTime = mIntTime + 1;
 
@@ -156,7 +159,7 @@ namespace TestApp
             }
             else
             {
-                m_objSteeringScenario.Update(HighResTimer.Instance.ElapsedTime);
+                m_objSteeringScenario.Update(mHighResTimer.ElapsedTime);
             }            
 
             ReDraw();

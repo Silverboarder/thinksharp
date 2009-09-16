@@ -186,7 +186,7 @@ namespace ThinkSharp.Common
         //  given a std::vector of 2D vectors, a position, orientation and scale,
         //  this function transforms the 2D vectors into the object's world space
         //------------------------------------------------------------------------
-        public static List<Vector2D> WorldTransform(ref List<Vector2D> points,
+        public static List<Vector2D> WorldTransform(List<Vector2D> points,
                                                     Vector2D pos,
                                                     Vector2D forward,
                                                     Vector2D side,
@@ -221,7 +221,7 @@ namespace ThinkSharp.Common
         //  given a std::vector of 2D vectors, a position and  orientation
         //  this function transforms the 2D vectors into the object's world space
         //------------------------------------------------------------------------
-        public static List<Vector2D> WorldTransform(ref List<Vector2D> points,
+        public static List<Vector2D> WorldTransform(List<Vector2D> points,
                                          Vector2D pos,
                                          Vector2D forward,
                                          Vector2D side)

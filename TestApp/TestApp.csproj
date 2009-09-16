@@ -14,7 +14,7 @@
     <OldToolsVersion>2.0</OldToolsVersion>
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
-    <StartupObject>TestApp.MainSteering</StartupObject>
+    <StartupObject>TestApp.MainPathFinding</StartupObject>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -42,6 +42,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="PathFinding\frmPathFinderDemo.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="PathFinding\frmPathFinderDemo.Designer.cs">
+      <DependentUpon>frmPathFinderDemo.cs</DependentUpon>
+    </Compile>
+    <Compile Include="PathFinding\MainPathFinding.cs" />
+    <Compile Include="PathFinding\PathFinder.cs" />
     <Compile Include="StateMachines\BarFlyJoe.cs" />
     <Compile Include="StateMachines\BarFlyJoeStates.cs" />
     <Compile Include="StateMachines\frmMinerDemo.cs">
@@ -64,6 +72,10 @@
     </Compile>
     <Compile Include="Steering\MainSteering.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="PathFinding\frmPathFinderDemo.resx">
+      <DependentUpon>frmPathFinderDemo.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="StateMachines\frmMinerDemo.resx">
       <DependentUpon>frmMinerDemo.cs</DependentUpon>
     </EmbeddedResource>
@@ -96,6 +108,10 @@
     <ProjectReference Include="..\Common\Common.csproj">
       <Project>{DFD64DFF-F851-4798-BB88-045CDD141397}</Project>
       <Name>Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\PathFinding\PathFinding.csproj">
+      <Project>{1A7F1482-A0E8-430A-8513-5A58EDAC13B9}</Project>
+      <Name>PathFinding</Name>
     </ProjectReference>
     <ProjectReference Include="..\StateMachines\StateMachines.csproj">
       <Project>{96C22E4C-E929-457B-9545-610035C4BD82}</Project>

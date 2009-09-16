@@ -6,7 +6,6 @@ namespace ThinkSharp.PathFinding
     public class NavGraphNode
     {
         protected int m_iIndex;
-        public const int invalid_node_index = -1;
 
         //the node's position
         Vector2D m_vPosition;
@@ -22,12 +21,12 @@ namespace ThinkSharp.PathFinding
 
         public NavGraphNode()
         {
-            m_iIndex = invalid_node_index;
+            m_iIndex = SparseGraph.invalid_node_index;
         }
 
         public NavGraphNode(Object ExtraInfo)
         {
-            m_iIndex = invalid_node_index;
+            m_iIndex = SparseGraph.invalid_node_index;
             m_ExtraInfo = ExtraInfo;
         }
 

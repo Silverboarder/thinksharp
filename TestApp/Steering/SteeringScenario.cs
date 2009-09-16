@@ -572,11 +572,11 @@ namespace TestApp
 
             if (UseSmoothing)
             {
-                points = Utils.WorldTransform(ref points, objVehicle.Pos, objVehicle.SmoothedHeading(), objVehicle.SmoothedHeading().Perp());
+                points = Utils.WorldTransform(points, objVehicle.Pos, objVehicle.SmoothedHeading(), objVehicle.SmoothedHeading().Perp());
             }
             else
             {
-                points = Utils.WorldTransform(ref points, objVehicle.Pos, objVehicle.Heading(), objVehicle.Side());                
+                points = Utils.WorldTransform(points, objVehicle.Pos, objVehicle.Heading(), objVehicle.Side());                
             }
 
             objGraphics.DrawLine(objPen, (PointF)points[0], (PointF)points[1]);

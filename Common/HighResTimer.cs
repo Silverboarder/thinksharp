@@ -5,17 +5,6 @@ namespace ThinkSharp.Common
 {
     public class HighResTimer
     {
-        #region " Singleton class implementation "
-
-        private static readonly HighResTimer instance = new HighResTimer();
-
-        public static HighResTimer Instance
-        {
-            get { return instance; }
-        }
-
-        #endregion
-
         private long m_ticksPerSecond;
         private long m_currentTime;
         private long m_lastTime;
@@ -44,7 +33,7 @@ namespace ThinkSharp.Common
         private static extern bool QueryPerformanceFrequency(out long lpFrequency);     
 
         /// <summary>Creates a new Timer</summary>
-        private HighResTimer()
+        public HighResTimer()
         {
             // Find the frequency, or amount of ticks per second
             QueryPerformanceFrequency(out m_ticksPerSecond);
@@ -78,6 +67,7 @@ namespace ThinkSharp.Common
 
             long stopTime = 0;
             QueryPerformanceCounter(out stopTime);
+
             m_runningTime += (float)(stopTime - m_lastTime) / (float)m_ticksPerSecond;
             m_timerStopped = true;
 

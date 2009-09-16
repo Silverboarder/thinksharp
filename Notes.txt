@@ -9,9 +9,13 @@ ThinkSharp is intended to be a collection of A.I. related libraries written in C
 All current projects are direct ports of the opensource code from the "Programming Game AI by Example" book by Mat Buckland.
 The original C++ code is available from the books accompanying website (http://www.wordware.com/files/ai/).
 
-Note on the C# port:
---------------------
-- The original "params.ini" has been replaced with the SteerParams class that simply contains the hard coded variables.
+
+License
+-------
+
+ThinkSharp uses the MIT License
+http://www.opensource.org/licenses/mit-license.php
+
 
 Note on the projects:
 ---------------------
@@ -26,15 +30,26 @@ TestApp project - An application project used to demonstrate the functionality o
 
 I plan to add further AI libraries over time; all planned are further ports of Mat's code.
 
+
 Todo:
 -----
 
-- Continue port refinement and make proper use of C# data structures and functionality.
+- Complete PathFinding port.
+- Continue port refinements and make proper use of C# data structures and functionality.
 - Add that third dimension; Replace all 2D with 3D. This should not affect the 2D demos as the z-plane is simply ignored. 
 - Make a demo Steering application using Mogre (http://www.ogre3d.org/wiki/index.php/MOGRE) for the rendering.
 - Add further AI ports, initially more of Mat Buckland's code ported to C#.
 
 
-=======
-Paul D.
-=======
+====================================================
+
+Author: Paul Downey
+Contact: prdowney@googlemail.com
+
+Please send me bug reports/ehancements/suggestions. 
+Huge thanks to Mat Buckland for his freely available 
+c++ AI libraries. Buy his book, its worth every Penny.
+
+Have fun!
+
+====================================================

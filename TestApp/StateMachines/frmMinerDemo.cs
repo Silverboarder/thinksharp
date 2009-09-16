@@ -16,6 +16,8 @@ namespace TestApp
     public partial class frmMinerDemo : Form
     {
         private BackgroundWorker m_AsyncWorker;
+        private HighResTimer mHighResTimer;
+
         private Miner Bob;
         private MinersWife Elsa;
         private BarFlyJoe Joe;
@@ -27,6 +29,8 @@ namespace TestApp
         public frmMinerDemo()
         {
             InitializeComponent();
+
+            mHighResTimer = new HighResTimer();
 
             // m_AsyncWorker will be used to perform the AI work on a background thread.
             m_AsyncWorker = new BackgroundWorker();
@@ -68,7 +72,7 @@ namespace TestApp
             // report progress and check for cancellation.
             BackgroundWorker bwAsync = (BackgroundWorker)sender;
 
-            HighResTimer.Instance.Start();
+            mHighResTimer.Start();
 
             try
             {
@@ -78,14 +82,16 @@ namespace TestApp
                     if (bwAsync.CancellationPending)
                         break;
 
-                    HighResTimer.Instance.Update();
+                    mHighResTimer.Update();
 
                     Bob.Update();
                     Elsa.Update();
                     Joe.Update();
 
+                    MessageDispatcher.Instance.UpdateRunningTime(mHighResTimer.RunningTime);
+
                     //dispatch any delayed messages
-                    MessageDispatcher.Instance.DispatchDelayedMessages();
+                    MessageDispatcher.Instance.DispatchDelayedMessages();                    
 
                     bwAsync.ReportProgress((int)((double)(i / 50) * 100));
 

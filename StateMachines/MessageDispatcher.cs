@@ -27,6 +27,8 @@ namespace ThinkSharp.StateMachines
         // All registered BaseGameEntity's that may want to deal with messages
         private Dictionary<int, BaseGameEntity> m_dictEntities;
 
+        double m_CurrentRunningTime;
+
         private MessageDispatcher()
         {
             m_PriorityQ = new List<Telegram>();
@@ -55,6 +57,16 @@ namespace ThinkSharp.StateMachines
         public void RegisterEntity(BaseGameEntity NewEntity)
         {
             m_dictEntities[NewEntity.ID()] = NewEntity;
+        }
+
+        public void UpdateRunningTime(double newTime)
+        {
+            m_CurrentRunningTime = newTime;
+        }
+
+        public double GetRunningTime()
+        {
+            return m_CurrentRunningTime;
         }
 
         //this method is utilized by DispatchMessage or DispatchDelayedMessages.
@@ -93,7 +105,7 @@ namespace ThinkSharp.StateMachines
             //if there is no delay, route telegram immediately
             if (delay <= 0.0f)
             {
-                Debug.WriteLine(String.Format("Instant telegram dispatched at time: {0} by {1} for {2}. Msg is {3}", HighResTimer.Instance.RunningTime, pSender.ID().ToString(), pReceiver.ID().ToString(), msg));
+                Debug.WriteLine(String.Format("Instant telegram dispatched at time: {0} by {1} for {2}. Msg is {3}", m_CurrentRunningTime, pSender.ID().ToString(), pReceiver.ID().ToString(), msg));
 
                 //send the telegram to the recipient
                 Discharge(pReceiver, telegram);
@@ -101,8 +113,7 @@ namespace ThinkSharp.StateMachines
             //else calculate the time when the telegram should be dispatched
             else
             {
-                double CurrentTime = HighResTimer.Instance.RunningTime;
-                telegram.DispatchTime = CurrentTime + delay;
+                telegram.DispatchTime = m_CurrentRunningTime + delay;
 
                 if (!m_PriorityQ.Contains(telegram))
                 {
@@ -112,7 +123,7 @@ namespace ThinkSharp.StateMachines
                     // and sort the queue
                     m_PriorityQ.Sort(CompareByDispatchTime);
 
-                    Debug.WriteLine(String.Format("Delayed telegram from {0} stored at time {1} for {2}. Msg is {3}", pSender.ID(), CurrentTime.ToString(), pReceiver.ID(), msg));
+                    Debug.WriteLine(String.Format("Delayed telegram from {0} stored at time {1} for {2}. Msg is {3}", pSender.ID(), m_CurrentRunningTime.ToString(), pReceiver.ID(), msg));
                 }
             }
         }
@@ -140,13 +151,10 @@ namespace ThinkSharp.StateMachines
         //------------------------------------------------------------------------
         public void DispatchDelayedMessages()
         {
-            //get current time
-            double CurrentTime = HighResTimer.Instance.RunningTime;
-
             //now peek at the queue to see if any telegrams need dispatching.
             //remove all telegrams from the front of the queue that have gone
             //past their sell by date
-            while (!(m_PriorityQ.Count == 0) && (m_PriorityQ[0].DispatchTime < HighResTimer.Instance.RunningTime) && (m_PriorityQ[0].DispatchTime > 0))
+            while (!(m_PriorityQ.Count == 0) && (m_PriorityQ[0].DispatchTime < m_CurrentRunningTime) && (m_PriorityQ[0].DispatchTime > 0))
             {
                 //read the telegram from the front of the queue
                 Telegram telegram = m_PriorityQ[0];

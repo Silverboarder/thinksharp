@@ -37,7 +37,7 @@ namespace TestApp
             {
                 case (int)message_type.Msg_HiHoneyImHome:
                     {
-                        double CurrentTime = HighResTimer.Instance.RunningTime;
+                        double CurrentTime = MessageDispatcher.Instance.GetRunningTime();
 
                         DebugMessages.Instance.WriteLine(String.Format("Message handled by {0} at time: {1}", MainSM.GetEntityName(wife.ID()), CurrentTime));
 
@@ -179,7 +179,7 @@ namespace TestApp
 
                 case (int)message_type.Msg_StewReady:
                     {
-                        DebugMessages.Instance.WriteLine(String.Format("Message received by {0} at time {1}", MainSM.GetEntityName(pEntity.ID()), HighResTimer.Instance.RunningTime));
+                        DebugMessages.Instance.WriteLine(String.Format("Message received by {0} at time {1}", MainSM.GetEntityName(pEntity.ID()), MessageDispatcher.Instance.GetRunningTime()));
                         DebugMessages.Instance.WriteLine(String.Format("{0}: StewReady! Lets eat", MainSM.GetEntityName(pEntity.ID())));
 
                         //let hubby know the stew is ready

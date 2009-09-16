@@ -9,9 +9,7 @@ namespace ThinkSharp.PathFinding
         protected int m_iTo;
 
         //the cost of traversing the edge
-        protected double m_dCost;
-
-        public const int invalid_node_index = -1;
+        protected double m_dCost;        
 
         //ctors
         public NavGraphEdge(int from, int to, double cost)
@@ -31,8 +29,8 @@ namespace ThinkSharp.PathFinding
         public NavGraphEdge()
         {
             m_dCost = 1.0;
-            m_iFrom = invalid_node_index;
-            m_iTo = invalid_node_index;
+            m_iFrom = SparseGraph.invalid_node_index;
+            m_iTo = SparseGraph.invalid_node_index;
         }
 
         public int From
@@ -65,7 +63,11 @@ namespace ThinkSharp.PathFinding
             return !(lhs == rhs);
         }
 
-
+        public static bool IsNull(NavGraphEdge o)
+        {
+            if ((object)o == null) return true;
+            return false;
+        }
 
     }
 }
