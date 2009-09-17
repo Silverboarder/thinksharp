@@ -294,19 +294,19 @@ namespace TestApp
                 switch (button.Name)
                 {
                     case "btnAlgoAStar":
-                        m_Pathfinder.CreatePathAStar();
+                        m_Pathfinder.CreateSearchPath(PathFinder.algorithm_type.search_astar);
                         break;
 
                     case "btnAlgoDj":
-                        m_Pathfinder.CreatePathDijkstra();
+                        m_Pathfinder.CreateSearchPath(PathFinder.algorithm_type.search_dijkstra);
                         break;
 
                     case "btnAlgoBF":
-                        m_Pathfinder.CreatePathBFS();
+                        m_Pathfinder.CreateSearchPath(PathFinder.algorithm_type.search_bfs);
                         break;
 
                     case "btnAlgoDF":
-                        m_Pathfinder.CreatePathDFS();
+                        m_Pathfinder.CreateSearchPath(PathFinder.algorithm_type.search_dfs);
                         break;
                 }
 

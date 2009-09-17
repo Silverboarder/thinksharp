@@ -287,7 +287,7 @@ namespace TestApp
             }
 
             //update any currently selected algorithm
-            UpdateAlgorithm();
+            CreateSearchPath(m_CurrentAlgorithm);
         }
 
         //--------------------------- UpdateGraphFromBrush ----------------------------
@@ -324,94 +324,70 @@ namespace TestApp
                 //set the edge costs in the graph
                 SparseGraph.Helper_WeightNavGraphNodeEdges(m_Graph, CellIndex, GetTerrainCost((brush_type)brush));
             }
-        }
+        }  
 
-        //--------------------------- UpdateAlgorithm ---------------------------------
-        public void UpdateAlgorithm()
-        {
-            //update any current algorithm
-            switch (m_CurrentAlgorithm)
-            {
-                case algorithm_type.none: break;
-
-                case algorithm_type.search_dfs:
-
-                    CreatePathDFS(); break;
-
-                case algorithm_type.search_bfs:
-
-                    CreatePathBFS(); break;
-
-                case algorithm_type.search_dijkstra:
-
-                    CreatePathDijkstra(); break;
-
-                case algorithm_type.search_astar:
-
-                    CreatePathAStar(); break;
-
-                default: break;
-            }
-        }
-
-        //------------------------- CreatePathDFS --------------------------------
-        //
-        //  uses DFS to find a path between the start and target cells.
-        //  Stores the path as a series of node indexes in m_Path.
-        //------------------------------------------------------------------------
-        public void CreatePathDFS()
+        public void CreateSearchPath(algorithm_type Algo)
         {
             //set current algorithm
-            m_CurrentAlgorithm = algorithm_type.search_dfs;
+            m_CurrentAlgorithm = Algo;
 
             //clear any existing path
             m_Path.Clear();
             m_SubTree.Clear();
+
+            if (m_CurrentAlgorithm == algorithm_type.none)
+                return;
 
             //create and start a timer
             HighResTimer tempTimer = new HighResTimer();
 
             tempTimer.Start();
 
+            BaseGraphSearchAlgo SearchAlgo = null;
+
             //do the search
-            Graph_SearchDFS DFS = new Graph_SearchDFS(m_Graph, m_iSourceCell, m_iTargetCell);
+            switch (m_CurrentAlgorithm)
+            {
+                case algorithm_type.search_dfs:
+
+                    SearchAlgo = new Graph_SearchDFS(m_Graph, m_iSourceCell, m_iTargetCell);  
+                    break;
+
+                case algorithm_type.search_bfs:
+
+                    SearchAlgo = new Graph_SearchBFS(m_Graph, m_iSourceCell, m_iTargetCell);
+                    break;
+
+                case algorithm_type.search_dijkstra:
+
+                    break;
+
+                case algorithm_type.search_astar:
+
+                    break;
+
+                default:
+
+                    throw new Exception("<PathFinder::CreateSearchPath>: algorithm_type does not exist");
+            }
 
             tempTimer.Stop();
 
             //record the time taken  
             m_dTimeTaken = tempTimer.RunningTime;
 
-            //now grab the path (if one has been found)
-            if (DFS.Found())
+            if (SearchAlgo != null)
             {
-                m_Path = DFS.GetPathToTarget();
+                //now grab the path (if one has been found)
+                if (SearchAlgo.Found())
+                {
+                    m_Path = SearchAlgo.GetPathToTarget();
+                }
+
+                m_SubTree = SearchAlgo.GetSearchTree();
+
+                m_dCostToTarget = SearchAlgo.GetCostToTarget();
             }
-
-            m_SubTree = DFS.GetSearchTree();
-
-            m_dCostToTarget = 0.0;
-        }
-
-        //------------------------- CreatePathBFS --------------------------------
-        //
-        //  uses BFS to find a path between the start and target cells.
-        //  Stores the path as a series of node indexes in m_Path.
-        //------------------------------------------------------------------------
-        public void CreatePathBFS()
-        {
-            //
-        }
-
-        //  creates a path from m_iSourceCell to m_iTargetCell using Dijkstra's algorithm
-        public void CreatePathDijkstra()
-        {
-//
-        }
-
-        public void CreatePathAStar()
-        {
-//
-
         }
 
         public void Save(string strFileName)
