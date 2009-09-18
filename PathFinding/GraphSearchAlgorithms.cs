@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using ThinkSharp.Common;
 
 namespace ThinkSharp.PathFinding
 {
@@ -255,7 +256,7 @@ namespace ThinkSharp.PathFinding
 
     #endregion
 
-    #region " Breadth first search "
+    #region " Dijkstra's algorithm "
 
     public class Graph_SearchDijkstra : BaseGraphSearchAlgo
     {
@@ -285,6 +286,13 @@ namespace ThinkSharp.PathFinding
             m_SearchFrontier = new List<NavGraphEdge>(numNodes);
             m_CostToThisNode = new List<double>(numNodes);
 
+            for (int i = 0; i < numNodes; i++)
+            {
+                m_ShortestPathTree.Add(null);
+                m_SearchFrontier.Add(null);
+                m_CostToThisNode.Add(0);
+            }            
+
             m_bFound = Search();
         }
 
@@ -296,7 +304,68 @@ namespace ThinkSharp.PathFinding
 
         public override bool Search()
         {
-            // TODO!
+            //create an indexed priority queue that sorts smallest to largest
+            //(front to back).Note that the maximum number of elements the iPQ
+            //may contain is N. This is because no node can be represented on the 
+            //queue more than once.
+            IndexedPriorityQLow pq = new IndexedPriorityQLow(m_CostToThisNode, m_Graph.NumNodes());
+
+            //put the source node on the queue
+            pq.insert(m_iSource);
+
+            //while the queue is not empty
+            while (!pq.empty())
+            {
+                //get lowest cost node from the queue. Don't forget, the return value
+                //is a *node index*, not the node itself. This node is the node not already
+                //on the SPT that is the closest to the source node
+                int NextClosestNode = pq.Pop();
+
+                //move this edge from the frontier to the shortest path tree
+                m_ShortestPathTree[NextClosestNode] = m_SearchFrontier[NextClosestNode];
+
+                //if the target has been found exit
+                if (NextClosestNode == m_iTarget) return true;
+
+                //now to relax the edges.
+                SparseGraph.EdgeIterator EdgeItr = new SparseGraph.EdgeIterator(m_Graph, NextClosestNode);
+
+                while (EdgeItr.MoveNext())
+                {
+                    //the total cost to the node this edge points to is the cost to the
+                    //current node plus the cost of the edge connecting them.
+                    double NewCost = m_CostToThisNode[NextClosestNode] + EdgeItr.Current.Cost;
+
+                    //if this edge has never been on the frontier make a note of the cost
+                    //to get to the node it points to, then add the edge to the frontier
+                    //and the destination node to the PQ.
+                    if (NavGraphEdge.IsNull(m_SearchFrontier[EdgeItr.Current.To]))
+                    {
+                        m_CostToThisNode[EdgeItr.Current.To] = NewCost;
+
+                        pq.insert(EdgeItr.Current.To);
+
+                        m_SearchFrontier[EdgeItr.Current.To] = EdgeItr.Current;
+                    }
+
+                    //else test to see if the cost to reach the destination node via the
+                    //current node is cheaper than the cheapest cost found so far. If
+                    //this path is cheaper, we assign the new cost to the destination
+                    //node, update its entry in the PQ to reflect the change and add the
+                    //edge to the frontier
+                    else if ((NewCost < m_CostToThisNode[EdgeItr.Current.To]) &&
+                              NavGraphEdge.IsNull(m_ShortestPathTree[EdgeItr.Current.To]))
+                    {
+                        m_CostToThisNode[EdgeItr.Current.To] = NewCost;
+
+                        //because the cost is less than it was previously, the PQ must be
+                        //re-sorted to account for this.
+                        pq.ChangePriority(EdgeItr.Current.To);
+
+                        m_SearchFrontier[EdgeItr.Current.To] = EdgeItr.Current;
+                    }
+                }
+            }
             return false;
         }
 
@@ -312,7 +381,7 @@ namespace ThinkSharp.PathFinding
 
             path.Add(nd);
 
-            while (nd != m_iSource && (m_ShortestPathTree[nd] != null))
+            while (nd != m_iSource && !(NavGraphEdge.IsNull(m_ShortestPathTree[nd])))
             {
                 nd = m_ShortestPathTree[nd].From;
 

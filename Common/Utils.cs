@@ -266,7 +266,7 @@ namespace ThinkSharp.Common
             matTransform.Translate(AgentPosition.X, AgentPosition.Y);
 
             //now transform the vertices
-            matTransform.TransformVector2D( TransPoint);
+            matTransform.TransformVector2D(TransPoint);
 
             return TransPoint;
         }

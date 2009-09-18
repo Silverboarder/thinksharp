@@ -360,6 +360,7 @@ namespace TestApp
 
                 case algorithm_type.search_dijkstra:
 
+                    SearchAlgo = new Graph_SearchDijkstra(m_Graph, m_iSourceCell, m_iTargetCell);
                     break;
 
                 case algorithm_type.search_astar:

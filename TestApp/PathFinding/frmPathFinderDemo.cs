@@ -73,7 +73,7 @@ namespace TestApp
             if (m_Pathfinder.GetCurrentAlgorithm() ==  PathFinder.algorithm_type.search_astar 
                 || m_Pathfinder.GetCurrentAlgorithm() ==  PathFinder.algorithm_type.search_dijkstra)
             {
-                if (status == "") status = status + " | ";
+                if (status != "") status = status + " | ";
                status = status + "Cost is " + m_Pathfinder.GetCostToTarget();
             }
 

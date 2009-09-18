@@ -163,8 +163,8 @@ namespace ThinkSharp.Steering
             //the rotation matrix
             RotationMatrix.Rotate(angle * m_vHeading.Sign(toTarget));
 
-            RotationMatrix.TransformVector2D(new Vector2D(1,1)); //m_vHeading
-            RotationMatrix.TransformVector2D(new Vector2D(1, 1)); //m_vVelocity
+            RotationMatrix.TransformVector2D(m_vHeading); 
+            RotationMatrix.TransformVector2D(m_vVelocity);
 
             //finally recreate m_vSide
             m_vSide = m_vHeading.Perp();
