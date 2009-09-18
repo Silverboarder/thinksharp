@@ -39,6 +39,7 @@ namespace TestApp
 
             mBuffer1 = mGraphContext.Allocate(pnlViewPort.CreateGraphics(), pnlViewPort.DisplayRectangle);
             mBuffer1.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
+            mBuffer1.Graphics.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAliasGridFit;
 
             m_Pathfinder = new PathFinder();
             m_Pathfinder.InitialiseGraph(20, 20, pnlViewPort.Width, pnlViewPort.Height);
@@ -62,27 +63,6 @@ namespace TestApp
             mBuffer1.Graphics.Clear(Color.White);
 
             m_Pathfinder.Render(mBuffer1.Graphics);
-
-            string status = "";
-
-            if (m_Pathfinder.GetTimeTaken() > 0.0)
-            {
-                status = "Time Elapsed for " + m_Pathfinder.GetNameOfCurrentSearchAlgorithm() + " is " + m_Pathfinder.GetTimeTaken().ToString("0.####");
-            }
-
-            if (m_Pathfinder.GetCurrentAlgorithm() ==  PathFinder.algorithm_type.search_astar 
-                || m_Pathfinder.GetCurrentAlgorithm() ==  PathFinder.algorithm_type.search_dijkstra)
-            {
-                if (status != "") status = status + " | ";
-               status = status + "Cost is " + m_Pathfinder.GetCostToTarget();
-            }
-
-            if (status == "" && m_Pathfinder.GetCurrentAlgorithm() != PathFinder.algorithm_type.none)
-            {
-                status = "Search Algorithm: " + m_Pathfinder.GetNameOfCurrentSearchAlgorithm();
-            }
-
-            toolStripStatusLabel1.Text = status;
 
             mBuffer1.Render();
         }
@@ -129,6 +109,7 @@ namespace TestApp
 
                 m_Pathfinder.PaintTerrain(e.Location);
                 ReDraw();
+                updateGraphStatus();
             }
         }
 
@@ -144,6 +125,7 @@ namespace TestApp
                     {
                         m_Pathfinder.PaintTerrain(e.Location);
                         ReDraw();
+                        updateGraphStatus();
 
                         m_intMouseGridIndex = TestIndex;
                     }
@@ -211,6 +193,8 @@ namespace TestApp
 
                     ResetButtonAlgos();
                     m_Pathfinder.InitialiseGraph(20, 20, pnlViewPort.Width, pnlViewPort.Height);
+                    m_Pathfinder.InitialiseSourceTargetIndexes();
+                    toolStripStatusLabel1.Text = "New default graph loaded";
                     break;
 
                 case "Load":
@@ -218,6 +202,7 @@ namespace TestApp
                     if (openFileDialog1.ShowDialog() == DialogResult.OK)
                     {
                         m_Pathfinder.Load(openFileDialog1.FileName, pnlViewPort.Width, pnlViewPort.Height);
+                        toolStripStatusLabel1.Text = "Loaded map: " + openFileDialog1.FileName;
                     }
 
                     break;
@@ -227,6 +212,7 @@ namespace TestApp
                     if (saveFileDialog1.ShowDialog() == DialogResult.OK)
                     {
                         m_Pathfinder.Save(saveFileDialog1.FileName);
+                        toolStripStatusLabel1.Text = "Saved map: " + saveFileDialog1.FileName;
                     } 
 
                     break;
@@ -243,6 +229,30 @@ namespace TestApp
             }
 
             ReDraw();
+        }
+
+        private void updateGraphStatus()
+        {
+            string status = "";
+
+            if (m_Pathfinder.GetTimeTaken() > 0.0)
+            {
+                status = "Time Elapsed for " + m_Pathfinder.GetNameOfCurrentSearchAlgorithm() + " is " + m_Pathfinder.GetTimeTaken().ToString("0.####");
+            }
+
+            if (m_Pathfinder.GetCurrentAlgorithm() == PathFinder.algorithm_type.search_astar
+                || m_Pathfinder.GetCurrentAlgorithm() == PathFinder.algorithm_type.search_dijkstra)
+            {
+                if (status != "") status = status + " | ";
+                status = status + "Cost is " + m_Pathfinder.GetCostToTarget();
+            }
+
+            if (status == "" && m_Pathfinder.GetCurrentAlgorithm() != PathFinder.algorithm_type.none)
+            {
+                status = "Search Algorithm: " + m_Pathfinder.GetNameOfCurrentSearchAlgorithm();
+            }
+
+            toolStripStatusLabel1.Text = status;
         }
 
         private void btnBrush_Click(object sender, EventArgs e)
@@ -311,6 +321,7 @@ namespace TestApp
                 }
 
                 ReDraw();
+                updateGraphStatus();
             }
         }
 

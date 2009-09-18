@@ -23,33 +23,33 @@ Note on the projects:
 There are currently five projects within the ThinkSharp solution:
 
 Common - Contains all the shared AI functions and classes.
-PathFinding - Work in progress port of Mat's pathfinding library.
+PathFinding - A graph based Pathfinding library including Breadth First, Depth First, Dijkstra and A* Search algorithms.
 StateMachines - Classes and managers for Finite State Machines.
 Steering project - The Steering behaviour related code library.
 TestApp project - An application project used to demonstrate the functionality of the AI libraries. 
 
-I plan to add further AI libraries over time; all planned are further ports of Mat's code.
+I plan to add further ports of Mat's libraries in the near future.
 
 
 Todo:
 -----
 
-- Complete PathFinding port.
 - Continue port refinements and make proper use of C# data structures and functionality.
-- Add that third dimension; Replace all 2D with 3D. This should not affect the 2D demos as the z-plane is simply ignored. 
+- Add that third dimension; Replace 2D with 3D. This should not affect the 2D demos as the z-plane is simply ignored. 
 - Make a demo Steering application using Mogre (http://www.ogre3d.org/wiki/index.php/MOGRE) for the rendering.
 - Add further AI ports, initially more of Mat Buckland's code ported to C#.
 
 
-====================================================
+=====================================================
 
 Author: Paul Downey
 Contact: prdowney@googlemail.com
 
 Please send me bug reports/ehancements/suggestions. 
+
 Huge thanks to Mat Buckland for his freely available 
-c++ AI libraries. Buy his book, its worth every Penny.
+c++ AI libraries (Buy his book, its worth every Penny).
 
 Have fun!
 
-====================================================
+=====================================================

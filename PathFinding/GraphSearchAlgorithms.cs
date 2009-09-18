@@ -291,7 +291,7 @@ namespace ThinkSharp.PathFinding
                 m_ShortestPathTree.Add(null);
                 m_SearchFrontier.Add(null);
                 m_CostToThisNode.Add(0);
-            }            
+            }
 
             m_bFound = Search();
         }
@@ -404,4 +404,149 @@ namespace ThinkSharp.PathFinding
     }
 
     #endregion
+
+    #region " A* algorithm "
+
+    public class Graph_SearchAStar : BaseGraphSearchAlgo
+    {
+        private List<NavGraphEdge> m_ShortestPathTree;
+        private List<NavGraphEdge> m_SearchFrontier;
+
+        //indexed into my node. Contains the 'real' accumulative cost to that node
+        private List<double> m_GCosts;
+
+        //indexed into by node. Contains the cost from adding m_GCosts[n] to
+        //the heuristic cost from n to the target node. This is the vector the
+        //iPQ indexes into.
+        private List<double> m_FCosts;
+
+        //Function delegate defining the heuristic policy 
+        public delegate double CalculateHeuristic(SparseGraph graph, int nd1, int nd2);
+
+        private CalculateHeuristic funcPointer;
+
+        //  this searchs a graph using the distance between the target node and the 
+        //  currently considered node as a heuristic.
+        //  This search is more commonly known as A* (pronounced Ay-Star)
+        public Graph_SearchAStar(SparseGraph graph, int source, int target, CalculateHeuristic functionCalculate)
+            : base(graph, source, target)
+        {
+            funcPointer = functionCalculate;
+
+            int numNodes = m_Graph.NumNodes();
+
+            m_ShortestPathTree = new List<NavGraphEdge>(numNodes);
+            m_SearchFrontier = new List<NavGraphEdge>(numNodes);
+            m_GCosts = new List<double>(numNodes);
+            m_FCosts = new List<double>(numNodes);
+
+            for (int i = 0; i < numNodes; i++)
+            {
+                m_ShortestPathTree.Add(null);
+                m_SearchFrontier.Add(null);
+                m_GCosts.Add(0.0);
+                m_FCosts.Add(0.0);
+            }
+
+            m_bFound = Search();
+        }
+
+        //returns the list of edges that defines the SPT. If a target was given
+        //in the constructor then this will be an SPT comprising of all the nodes
+        //examined before the target was found, else it will contain all the nodes
+        //in the graph.
+        public override List<NavGraphEdge> GetSearchTree() { return m_ShortestPathTree; }
+
+        public override bool Search()
+        {
+            //create an indexed priority queue that sorts smallest to largest
+            //(front to back).Note that the maximum number of elements the iPQ
+            //may contain is N. This is because no node can be represented on the 
+            //queue more than once.
+            IndexedPriorityQLow pq = new IndexedPriorityQLow(m_FCosts, m_Graph.NumNodes());
+
+            //put the source node on the queue
+            pq.insert(m_iSource);
+
+            //while the queue is not empty
+            while (!pq.empty())
+            {
+                //get lowest cost node from the queue. 
+                int NextClosestNode = pq.Pop();
+
+                //move this node from the frontier to the spanning tree
+                m_ShortestPathTree[NextClosestNode] = m_SearchFrontier[NextClosestNode];
+
+                //if the target has been found exit
+                if (NextClosestNode == m_iTarget) return true;
+
+                //now to relax the edges.
+                SparseGraph.EdgeIterator EdgeItr = new SparseGraph.EdgeIterator(m_Graph, NextClosestNode);
+
+                while (EdgeItr.MoveNext())
+                {
+                    //calculate the heuristic cost from this node to the target (H)                       
+                    double HCost = funcPointer(m_Graph, m_iTarget, EdgeItr.Current.To);
+
+                    //calculate the 'real' cost to this node from the source (G)
+                    double GCost = m_GCosts[NextClosestNode] + EdgeItr.Current.Cost;
+
+                    //if the node has not been added to the frontier, add it and update
+                    //the G and F costs
+                    if (NavGraphEdge.IsNull(m_SearchFrontier[EdgeItr.Current.To]))
+                    {
+                        m_FCosts[EdgeItr.Current.To] = GCost + HCost;
+                        m_GCosts[EdgeItr.Current.To] = GCost;
+
+                        pq.insert(EdgeItr.Current.To);
+
+                        m_SearchFrontier[EdgeItr.Current.To] = EdgeItr.Current;
+                    }
+                    //if this node is already on the frontier but the cost to get here
+                    //is cheaper than has been found previously, update the node
+                    //costs and frontier accordingly.
+                    else if ((GCost < m_GCosts[EdgeItr.Current.To]) && NavGraphEdge.IsNull(m_ShortestPathTree[EdgeItr.Current.To]))
+                    {
+                        m_FCosts[EdgeItr.Current.To] = GCost + HCost;
+                        m_GCosts[EdgeItr.Current.To] = GCost;
+
+                        pq.ChangePriority(EdgeItr.Current.To);
+
+                        m_SearchFrontier[EdgeItr.Current.To] = EdgeItr.Current;
+                    }
+                }
+            }
+            return false;
+        }
+
+        public override List<int> GetPathToTarget()
+        {
+            List<int> path = new List<int>();
+
+            //just return an empty path if no path to target found or if
+            //no target has been specified
+            if (!m_bFound || m_iTarget < 0) return path;
+
+            int nd = m_iTarget;
+
+            path.Add(nd);
+
+            while (nd != m_iSource && !(NavGraphEdge.IsNull(m_ShortestPathTree[nd])))
+            {
+                nd = m_ShortestPathTree[nd].From;
+
+                path.Insert(0, nd); // Adds an element to the beginning of a list.
+            }
+
+            return path;
+        }
+
+        public override double GetCostToTarget()
+        {
+            return m_GCosts[m_iTarget];
+        }
+    }
+
+    #endregion
+
 }

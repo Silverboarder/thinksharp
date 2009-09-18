@@ -76,6 +76,34 @@ namespace TestApp
         private double m_dTimeTaken;
 
         private Pen m_ThickBlack, m_ThickBlue;
+        private Font m_font;
+
+        #region " A* Heuristic Policies "
+
+        //calculate the straight line distance from node nd1 to node nd2
+        public static double EuclidianDistance(SparseGraph G, int nd1, int nd2)
+        {
+            return Vector2D.Vec2DDistance(G.GetNode(nd1).Pos, G.GetNode(nd2).Pos);
+        }
+
+        //this uses the euclidian distance but adds in an amount of noise to the 
+        //result. You can use this heuristic to provide imperfect paths. This can
+        //be handy if you find that you frequently have lots of agents all following
+        //each other in single file to get from one place to another
+        public static double NoisyEuclidianDistance(SparseGraph G, int nd1, int nd2)
+        {
+            return Vector2D.Vec2DDistance(G.GetNode(nd1).Pos, G.GetNode(nd2).Pos) * Utils.RandInRange(0.9f, 1.1f);
+        }
+
+        //you can use this function to turn the A* algorithm into Dijkstra's search.
+        //this is because Dijkstra's is equivalent to an A* search using a heuristic
+        //value that is always equal to zero.
+        public static double Dijkstra(SparseGraph G, int nd1, int nd2)
+        {
+            return 0;
+        }
+
+        #endregion
 
         public PathFinder()
         {
@@ -96,6 +124,7 @@ namespace TestApp
 
             m_ThickBlack = new Pen(Color.Black, 2);
             m_ThickBlue = new Pen(Color.Blue, 2);
+            m_font = new Font("Arial", 9, FontStyle.Regular);
         }
 
         public bool ShowGraph
@@ -195,7 +224,7 @@ namespace TestApp
 
         //initialize source and target indexes to mid top and bottom of grid 
         public void InitialiseSourceTargetIndexes()
-        {            
+        {
             Vector2DToIndex(new Vector2D(m_icxClient / 2, m_dCellHeight * 2), ref m_iTargetCell);
             Vector2DToIndex(new Vector2D(m_icxClient / 2, m_icyClient - m_dCellHeight * 2), ref m_iSourceCell);
         }
@@ -324,7 +353,7 @@ namespace TestApp
                 //set the edge costs in the graph
                 SparseGraph.Helper_WeightNavGraphNodeEdges(m_Graph, CellIndex, GetTerrainCost((brush_type)brush));
             }
-        }  
+        }
 
         public void CreateSearchPath(algorithm_type Algo)
         {
@@ -350,7 +379,7 @@ namespace TestApp
             {
                 case algorithm_type.search_dfs:
 
-                    SearchAlgo = new Graph_SearchDFS(m_Graph, m_iSourceCell, m_iTargetCell);  
+                    SearchAlgo = new Graph_SearchDFS(m_Graph, m_iSourceCell, m_iTargetCell);
                     break;
 
                 case algorithm_type.search_bfs:
@@ -365,9 +394,9 @@ namespace TestApp
 
                 case algorithm_type.search_astar:
 
+                    SearchAlgo = new Graph_SearchAStar(m_Graph, m_iSourceCell, m_iTargetCell, EuclidianDistance);
                     break;
 
-                default:
 
                     throw new Exception("<PathFinder::CreateSearchPath>: algorithm_type does not exist");
             }
@@ -404,14 +433,14 @@ namespace TestApp
             fileStream.WriteLine(m_iCellsX);
             fileStream.WriteLine(m_iCellsY);
 
-            fileStream.WriteLine(m_iSourceCell);
-            fileStream.WriteLine(m_iTargetCell);
-
             //save the terrain
             for (int t = 0; t < m_TerrainType.Count; ++t)
             {
                 fileStream.WriteLine(m_TerrainType[t]);
             }
+
+            fileStream.WriteLine(m_iSourceCell);
+            fileStream.WriteLine(m_iTargetCell);
         }
 
         public void Load(string strFileName, int Width, int Height)
@@ -427,13 +456,11 @@ namespace TestApp
             }
         }
 
+        // Should be backwards compatible with map files from previous C++ version
         public void Load(StreamReader fileStream, int Width, int Height)
         {
             m_iCellsX = int.Parse(fileStream.ReadLine());
             m_iCellsY = int.Parse(fileStream.ReadLine());
-
-            m_iSourceCell = int.Parse(fileStream.ReadLine());
-            m_iTargetCell = int.Parse(fileStream.ReadLine());
 
             InitialiseGraph(m_iCellsY, m_iCellsX, Width, Height);
 
@@ -450,9 +477,26 @@ namespace TestApp
 
                 terrain = int.Parse(input);
 
-                m_TerrainType[t] = terrain;
+                // Previous version didnt store start/end nodes and the terrain type, 
+                // so just assign normal terrain in these instances.
+                if (terrain == (int)brush_type.source)
+                {
+                    m_iSourceCell = t;
+                    m_TerrainType[t] = (int)brush_type.normal;
+                }
+                else if (terrain == (int)brush_type.target)
+                {
+                    m_iTargetCell = t;
+                    m_TerrainType[t] = (int)brush_type.normal;
+                }                
 
                 UpdateGraphFromBrush(terrain, t);
+            }
+            
+            if (!fileStream.EndOfStream)
+            {
+                m_iSourceCell = int.Parse(fileStream.ReadLine());
+                m_iTargetCell = int.Parse(fileStream.ReadLine());
             }
         }
 
@@ -506,11 +550,13 @@ namespace TestApp
                 {
                     rect.Inflate(-4, -4);
                     objGraphics.FillRectangle(Brushes.Red, rect);
+                    objGraphics.DrawString("T", m_font, Brushes.Black, rect.Right - (int)(rect.Width * 0.75), rect.Y); 
                 }
                 else if (nd == m_iSourceCell)
                 {
                     rect.Inflate(-4, -4);
                     objGraphics.FillRectangle(Brushes.LightGreen, rect);
+                    objGraphics.DrawString("S", m_font, Brushes.Black, rect.Right - (int)(rect.Width * 0.75), rect.Y); 
                 }
 
                 //render dots at the corners of the cells

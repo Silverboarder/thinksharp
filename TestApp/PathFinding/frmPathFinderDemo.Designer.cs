@@ -33,16 +33,19 @@
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.btnAlgoDF = new System.Windows.Forms.Button();
             this.btnAlgoAStar = new System.Windows.Forms.Button();
-            this.btnAlgoBF = new System.Windows.Forms.Button();
-            this.btnBrushNormal = new System.Windows.Forms.Button();
+            this.label3 = new System.Windows.Forms.Label();
             this.btnAlgoDj = new System.Windows.Forms.Button();
-            this.btnBrushWater = new System.Windows.Forms.Button();
-            this.btnBrushMud = new System.Windows.Forms.Button();
+            this.btnBrushNormal = new System.Windows.Forms.Button();
+            this.btnAlgoBF = new System.Windows.Forms.Button();
             this.btnBrushObstacle = new System.Windows.Forms.Button();
+            this.btnAlgoDF = new System.Windows.Forms.Button();
+            this.label1 = new System.Windows.Forms.Label();
             this.btnBrushTarget = new System.Windows.Forms.Button();
+            this.btnBrushMud = new System.Windows.Forms.Button();
             this.btnBrushSource = new System.Windows.Forms.Button();
+            this.label2 = new System.Windows.Forms.Label();
+            this.btnBrushWater = new System.Windows.Forms.Button();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.MenuFile = new System.Windows.Forms.ToolStripMenuItem();
             this.MenuNew = new System.Windows.Forms.ToolStripMenuItem();
@@ -94,41 +97,30 @@
             // 
             this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
-            this.panel1.Controls.Add(this.btnAlgoDF);
             this.panel1.Controls.Add(this.btnAlgoAStar);
-            this.panel1.Controls.Add(this.btnAlgoBF);
-            this.panel1.Controls.Add(this.btnBrushNormal);
+            this.panel1.Controls.Add(this.label3);
             this.panel1.Controls.Add(this.btnAlgoDj);
-            this.panel1.Controls.Add(this.btnBrushWater);
-            this.panel1.Controls.Add(this.btnBrushMud);
+            this.panel1.Controls.Add(this.btnBrushNormal);
+            this.panel1.Controls.Add(this.btnAlgoBF);
             this.panel1.Controls.Add(this.btnBrushObstacle);
+            this.panel1.Controls.Add(this.btnAlgoDF);
+            this.panel1.Controls.Add(this.label1);
             this.panel1.Controls.Add(this.btnBrushTarget);
+            this.panel1.Controls.Add(this.btnBrushMud);
             this.panel1.Controls.Add(this.btnBrushSource);
+            this.panel1.Controls.Add(this.label2);
+            this.panel1.Controls.Add(this.btnBrushWater);
             this.panel1.Location = new System.Drawing.Point(0, 460);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(534, 32);
             this.panel1.TabIndex = 4;
-            // 
-            // btnAlgoDF
-            // 
-            this.btnAlgoDF.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnAlgoDF.FlatAppearance.BorderColor = System.Drawing.Color.DarkSlateGray;
-            this.btnAlgoDF.FlatAppearance.BorderSize = 2;
-            this.btnAlgoDF.Location = new System.Drawing.Point(368, 2);
-            this.btnAlgoDF.Name = "btnAlgoDF";
-            this.btnAlgoDF.Size = new System.Drawing.Size(34, 25);
-            this.btnAlgoDF.TabIndex = 6;
-            this.btnAlgoDF.Text = "DF";
-            this.toolTip1.SetToolTip(this.btnAlgoDF, "Depth First");
-            this.btnAlgoDF.UseVisualStyleBackColor = false;
-            this.btnAlgoDF.Click += new System.EventHandler(this.btnAlgo_Click);
             // 
             // btnAlgoAStar
             // 
             this.btnAlgoAStar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnAlgoAStar.FlatAppearance.BorderColor = System.Drawing.Color.DarkSlateGray;
             this.btnAlgoAStar.FlatAppearance.BorderSize = 2;
-            this.btnAlgoAStar.Location = new System.Drawing.Point(488, 2);
+            this.btnAlgoAStar.Location = new System.Drawing.Point(497, 3);
             this.btnAlgoAStar.Name = "btnAlgoAStar";
             this.btnAlgoAStar.Size = new System.Drawing.Size(34, 25);
             this.btnAlgoAStar.TabIndex = 9;
@@ -137,40 +129,23 @@
             this.btnAlgoAStar.UseVisualStyleBackColor = false;
             this.btnAlgoAStar.Click += new System.EventHandler(this.btnAlgo_Click);
             // 
-            // btnAlgoBF
+            // label3
             // 
-            this.btnAlgoBF.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnAlgoBF.FlatAppearance.BorderColor = System.Drawing.Color.DarkSlateGray;
-            this.btnAlgoBF.FlatAppearance.BorderSize = 2;
-            this.btnAlgoBF.Location = new System.Drawing.Point(408, 2);
-            this.btnAlgoBF.Name = "btnAlgoBF";
-            this.btnAlgoBF.Size = new System.Drawing.Size(34, 25);
-            this.btnAlgoBF.TabIndex = 7;
-            this.btnAlgoBF.Text = "BF";
-            this.toolTip1.SetToolTip(this.btnAlgoBF, "Breadth First");
-            this.btnAlgoBF.UseVisualStyleBackColor = false;
-            this.btnAlgoBF.Click += new System.EventHandler(this.btnAlgo_Click);
-            // 
-            // btnBrushNormal
-            // 
-            this.btnBrushNormal.BackColor = System.Drawing.Color.White;
-            this.btnBrushNormal.FlatAppearance.BorderColor = System.Drawing.Color.DarkSlateGray;
-            this.btnBrushNormal.FlatAppearance.BorderSize = 2;
-            this.btnBrushNormal.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnBrushNormal.Location = new System.Drawing.Point(148, 3);
-            this.btnBrushNormal.Name = "btnBrushNormal";
-            this.btnBrushNormal.Size = new System.Drawing.Size(23, 23);
-            this.btnBrushNormal.TabIndex = 5;
-            this.toolTip1.SetToolTip(this.btnBrushNormal, "Normal Brush");
-            this.btnBrushNormal.UseVisualStyleBackColor = false;
-            this.btnBrushNormal.Click += new System.EventHandler(this.btnBrush_Click);
+            this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.label3.AutoSize = true;
+            this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label3.Location = new System.Drawing.Point(309, 6);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(62, 15);
+            this.label3.TabIndex = 12;
+            this.label3.Text = "Algorithm:";
             // 
             // btnAlgoDj
             // 
             this.btnAlgoDj.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnAlgoDj.FlatAppearance.BorderColor = System.Drawing.Color.DarkSlateGray;
             this.btnAlgoDj.FlatAppearance.BorderSize = 2;
-            this.btnAlgoDj.Location = new System.Drawing.Point(448, 2);
+            this.btnAlgoDj.Location = new System.Drawing.Point(457, 3);
             this.btnAlgoDj.Name = "btnAlgoDj";
             this.btnAlgoDj.Size = new System.Drawing.Size(34, 25);
             this.btnAlgoDj.TabIndex = 8;
@@ -179,70 +154,138 @@
             this.btnAlgoDj.UseVisualStyleBackColor = false;
             this.btnAlgoDj.Click += new System.EventHandler(this.btnAlgo_Click);
             // 
-            // btnBrushWater
+            // btnBrushNormal
             // 
-            this.btnBrushWater.BackColor = System.Drawing.Color.DodgerBlue;
-            this.btnBrushWater.FlatAppearance.BorderColor = System.Drawing.Color.DarkSlateGray;
-            this.btnBrushWater.FlatAppearance.BorderSize = 2;
-            this.btnBrushWater.Location = new System.Drawing.Point(119, 3);
-            this.btnBrushWater.Name = "btnBrushWater";
-            this.btnBrushWater.Size = new System.Drawing.Size(23, 23);
-            this.btnBrushWater.TabIndex = 4;
-            this.toolTip1.SetToolTip(this.btnBrushWater, "Water Brush");
-            this.btnBrushWater.UseVisualStyleBackColor = false;
-            this.btnBrushWater.Click += new System.EventHandler(this.btnBrush_Click);
+            this.btnBrushNormal.BackColor = System.Drawing.Color.White;
+            this.btnBrushNormal.FlatAppearance.BorderColor = System.Drawing.Color.DarkSlateGray;
+            this.btnBrushNormal.FlatAppearance.BorderSize = 2;
+            this.btnBrushNormal.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnBrushNormal.Location = new System.Drawing.Point(245, 3);
+            this.btnBrushNormal.Name = "btnBrushNormal";
+            this.btnBrushNormal.Size = new System.Drawing.Size(23, 24);
+            this.btnBrushNormal.TabIndex = 5;
+            this.toolTip1.SetToolTip(this.btnBrushNormal, "Normal Brush");
+            this.btnBrushNormal.UseVisualStyleBackColor = false;
+            this.btnBrushNormal.Click += new System.EventHandler(this.btnBrush_Click);
             // 
-            // btnBrushMud
+            // btnAlgoBF
             // 
-            this.btnBrushMud.BackColor = System.Drawing.Color.Brown;
-            this.btnBrushMud.FlatAppearance.BorderColor = System.Drawing.Color.DarkSlateGray;
-            this.btnBrushMud.FlatAppearance.BorderSize = 2;
-            this.btnBrushMud.Location = new System.Drawing.Point(90, 3);
-            this.btnBrushMud.Name = "btnBrushMud";
-            this.btnBrushMud.Size = new System.Drawing.Size(23, 23);
-            this.btnBrushMud.TabIndex = 3;
-            this.toolTip1.SetToolTip(this.btnBrushMud, "Mud Brush");
-            this.btnBrushMud.UseVisualStyleBackColor = false;
-            this.btnBrushMud.Click += new System.EventHandler(this.btnBrush_Click);
+            this.btnAlgoBF.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnAlgoBF.FlatAppearance.BorderColor = System.Drawing.Color.DarkSlateGray;
+            this.btnAlgoBF.FlatAppearance.BorderSize = 2;
+            this.btnAlgoBF.Location = new System.Drawing.Point(417, 3);
+            this.btnAlgoBF.Name = "btnAlgoBF";
+            this.btnAlgoBF.Size = new System.Drawing.Size(34, 25);
+            this.btnAlgoBF.TabIndex = 7;
+            this.btnAlgoBF.Text = "BF";
+            this.toolTip1.SetToolTip(this.btnAlgoBF, "Breadth First");
+            this.btnAlgoBF.UseVisualStyleBackColor = false;
+            this.btnAlgoBF.Click += new System.EventHandler(this.btnAlgo_Click);
             // 
             // btnBrushObstacle
             // 
             this.btnBrushObstacle.BackColor = System.Drawing.Color.Black;
             this.btnBrushObstacle.FlatAppearance.BorderColor = System.Drawing.Color.DarkSlateGray;
             this.btnBrushObstacle.FlatAppearance.BorderSize = 2;
-            this.btnBrushObstacle.Location = new System.Drawing.Point(61, 3);
+            this.btnBrushObstacle.Location = new System.Drawing.Point(158, 3);
             this.btnBrushObstacle.Name = "btnBrushObstacle";
-            this.btnBrushObstacle.Size = new System.Drawing.Size(23, 23);
+            this.btnBrushObstacle.Size = new System.Drawing.Size(23, 24);
             this.btnBrushObstacle.TabIndex = 2;
             this.toolTip1.SetToolTip(this.btnBrushObstacle, "Obstacle Brush");
             this.btnBrushObstacle.UseVisualStyleBackColor = false;
             this.btnBrushObstacle.Click += new System.EventHandler(this.btnBrush_Click);
+            // 
+            // btnAlgoDF
+            // 
+            this.btnAlgoDF.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnAlgoDF.FlatAppearance.BorderColor = System.Drawing.Color.DarkSlateGray;
+            this.btnAlgoDF.FlatAppearance.BorderSize = 2;
+            this.btnAlgoDF.Location = new System.Drawing.Point(377, 3);
+            this.btnAlgoDF.Name = "btnAlgoDF";
+            this.btnAlgoDF.Size = new System.Drawing.Size(34, 25);
+            this.btnAlgoDF.TabIndex = 6;
+            this.btnAlgoDF.Text = "DF";
+            this.toolTip1.SetToolTip(this.btnAlgoDF, "Depth First");
+            this.btnAlgoDF.UseVisualStyleBackColor = false;
+            this.btnAlgoDF.Click += new System.EventHandler(this.btnAlgo_Click);
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label1.Location = new System.Drawing.Point(3, 6);
+            this.label1.Margin = new System.Windows.Forms.Padding(3, 0, 0, 0);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(46, 15);
+            this.label1.TabIndex = 11;
+            this.label1.Text = "Nodes:";
             // 
             // btnBrushTarget
             // 
             this.btnBrushTarget.BackColor = System.Drawing.Color.Red;
             this.btnBrushTarget.FlatAppearance.BorderColor = System.Drawing.Color.DarkSlateGray;
             this.btnBrushTarget.FlatAppearance.BorderSize = 2;
-            this.btnBrushTarget.Location = new System.Drawing.Point(32, 3);
+            this.btnBrushTarget.Font = new System.Drawing.Font("Arial", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnBrushTarget.Location = new System.Drawing.Point(81, 3);
             this.btnBrushTarget.Name = "btnBrushTarget";
-            this.btnBrushTarget.Size = new System.Drawing.Size(23, 23);
+            this.btnBrushTarget.Size = new System.Drawing.Size(23, 24);
             this.btnBrushTarget.TabIndex = 1;
+            this.btnBrushTarget.Text = "T";
             this.toolTip1.SetToolTip(this.btnBrushTarget, "Target Brush");
             this.btnBrushTarget.UseVisualStyleBackColor = false;
             this.btnBrushTarget.Click += new System.EventHandler(this.btnBrush_Click);
+            // 
+            // btnBrushMud
+            // 
+            this.btnBrushMud.BackColor = System.Drawing.Color.Brown;
+            this.btnBrushMud.FlatAppearance.BorderColor = System.Drawing.Color.DarkSlateGray;
+            this.btnBrushMud.FlatAppearance.BorderSize = 2;
+            this.btnBrushMud.Location = new System.Drawing.Point(187, 3);
+            this.btnBrushMud.Name = "btnBrushMud";
+            this.btnBrushMud.Size = new System.Drawing.Size(23, 24);
+            this.btnBrushMud.TabIndex = 3;
+            this.toolTip1.SetToolTip(this.btnBrushMud, "Mud Brush");
+            this.btnBrushMud.UseVisualStyleBackColor = false;
+            this.btnBrushMud.Click += new System.EventHandler(this.btnBrush_Click);
             // 
             // btnBrushSource
             // 
             this.btnBrushSource.BackColor = System.Drawing.Color.LightGreen;
             this.btnBrushSource.FlatAppearance.BorderColor = System.Drawing.Color.DarkSlateGray;
             this.btnBrushSource.FlatAppearance.BorderSize = 2;
-            this.btnBrushSource.Location = new System.Drawing.Point(3, 3);
+            this.btnBrushSource.Font = new System.Drawing.Font("Arial", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnBrushSource.Location = new System.Drawing.Point(52, 3);
             this.btnBrushSource.Name = "btnBrushSource";
-            this.btnBrushSource.Size = new System.Drawing.Size(23, 23);
+            this.btnBrushSource.Size = new System.Drawing.Size(23, 24);
             this.btnBrushSource.TabIndex = 0;
+            this.btnBrushSource.Text = "S";
             this.toolTip1.SetToolTip(this.btnBrushSource, "Source Brush");
             this.btnBrushSource.UseVisualStyleBackColor = false;
             this.btnBrushSource.Click += new System.EventHandler(this.btnBrush_Click);
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label2.Location = new System.Drawing.Point(110, 6);
+            this.label2.Margin = new System.Windows.Forms.Padding(3, 0, 0, 0);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(45, 15);
+            this.label2.TabIndex = 11;
+            this.label2.Text = "Edges:";
+            // 
+            // btnBrushWater
+            // 
+            this.btnBrushWater.BackColor = System.Drawing.Color.DodgerBlue;
+            this.btnBrushWater.FlatAppearance.BorderColor = System.Drawing.Color.DarkSlateGray;
+            this.btnBrushWater.FlatAppearance.BorderSize = 2;
+            this.btnBrushWater.Location = new System.Drawing.Point(216, 3);
+            this.btnBrushWater.Name = "btnBrushWater";
+            this.btnBrushWater.Size = new System.Drawing.Size(23, 24);
+            this.btnBrushWater.TabIndex = 4;
+            this.toolTip1.SetToolTip(this.btnBrushWater, "Water Brush");
+            this.btnBrushWater.UseVisualStyleBackColor = false;
+            this.btnBrushWater.Click += new System.EventHandler(this.btnBrush_Click);
             // 
             // menuStrip1
             // 
@@ -346,6 +389,7 @@
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
             this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.ResumeLayout(false);
@@ -380,5 +424,8 @@
         private System.Windows.Forms.Button btnBrushTarget;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
         private System.Windows.Forms.SaveFileDialog saveFileDialog1;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label label3;
     }
 }
