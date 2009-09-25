@@ -72,7 +72,7 @@
             this.pnlViewPort.Cursor = System.Windows.Forms.Cursors.Cross;
             this.pnlViewPort.Location = new System.Drawing.Point(3, 27);
             this.pnlViewPort.Name = "pnlViewPort";
-            this.pnlViewPort.Size = new System.Drawing.Size(528, 427);
+            this.pnlViewPort.Size = new System.Drawing.Size(538, 437);
             this.pnlViewPort.TabIndex = 1;
             this.pnlViewPort.Paint += new System.Windows.Forms.PaintEventHandler(this.pnlViewPort_Paint);
             // 
@@ -80,9 +80,9 @@
             // 
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripStatusLabel1});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 492);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 502);
             this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(534, 22);
+            this.statusStrip1.Size = new System.Drawing.Size(544, 22);
             this.statusStrip1.SizingGrip = false;
             this.statusStrip1.TabIndex = 2;
             this.statusStrip1.Text = "statusStrip1";
@@ -110,9 +110,9 @@
             this.panel1.Controls.Add(this.btnBrushSource);
             this.panel1.Controls.Add(this.label2);
             this.panel1.Controls.Add(this.btnBrushWater);
-            this.panel1.Location = new System.Drawing.Point(0, 460);
+            this.panel1.Location = new System.Drawing.Point(0, 470);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(534, 32);
+            this.panel1.Size = new System.Drawing.Size(544, 32);
             this.panel1.TabIndex = 4;
             // 
             // btnAlgoAStar
@@ -120,7 +120,7 @@
             this.btnAlgoAStar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnAlgoAStar.FlatAppearance.BorderColor = System.Drawing.Color.DarkSlateGray;
             this.btnAlgoAStar.FlatAppearance.BorderSize = 2;
-            this.btnAlgoAStar.Location = new System.Drawing.Point(497, 3);
+            this.btnAlgoAStar.Location = new System.Drawing.Point(507, 3);
             this.btnAlgoAStar.Name = "btnAlgoAStar";
             this.btnAlgoAStar.Size = new System.Drawing.Size(34, 25);
             this.btnAlgoAStar.TabIndex = 9;
@@ -134,7 +134,7 @@
             this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label3.AutoSize = true;
             this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label3.Location = new System.Drawing.Point(309, 6);
+            this.label3.Location = new System.Drawing.Point(319, 6);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(62, 15);
             this.label3.TabIndex = 12;
@@ -145,7 +145,7 @@
             this.btnAlgoDj.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnAlgoDj.FlatAppearance.BorderColor = System.Drawing.Color.DarkSlateGray;
             this.btnAlgoDj.FlatAppearance.BorderSize = 2;
-            this.btnAlgoDj.Location = new System.Drawing.Point(457, 3);
+            this.btnAlgoDj.Location = new System.Drawing.Point(467, 3);
             this.btnAlgoDj.Name = "btnAlgoDj";
             this.btnAlgoDj.Size = new System.Drawing.Size(34, 25);
             this.btnAlgoDj.TabIndex = 8;
@@ -173,7 +173,7 @@
             this.btnAlgoBF.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnAlgoBF.FlatAppearance.BorderColor = System.Drawing.Color.DarkSlateGray;
             this.btnAlgoBF.FlatAppearance.BorderSize = 2;
-            this.btnAlgoBF.Location = new System.Drawing.Point(417, 3);
+            this.btnAlgoBF.Location = new System.Drawing.Point(427, 3);
             this.btnAlgoBF.Name = "btnAlgoBF";
             this.btnAlgoBF.Size = new System.Drawing.Size(34, 25);
             this.btnAlgoBF.TabIndex = 7;
@@ -200,7 +200,7 @@
             this.btnAlgoDF.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnAlgoDF.FlatAppearance.BorderColor = System.Drawing.Color.DarkSlateGray;
             this.btnAlgoDF.FlatAppearance.BorderSize = 2;
-            this.btnAlgoDF.Location = new System.Drawing.Point(377, 3);
+            this.btnAlgoDF.Location = new System.Drawing.Point(387, 3);
             this.btnAlgoDF.Name = "btnAlgoDF";
             this.btnAlgoDF.Size = new System.Drawing.Size(34, 25);
             this.btnAlgoDF.TabIndex = 6;
@@ -294,7 +294,7 @@
             this.MenuView});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(534, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(544, 24);
             this.menuStrip1.TabIndex = 0;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -377,7 +377,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(534, 514);
+            this.ClientSize = new System.Drawing.Size(544, 524);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.menuStrip1);

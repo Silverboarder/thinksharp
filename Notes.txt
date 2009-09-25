@@ -35,8 +35,7 @@ Todo:
 -----
 
 - Continue port refinements and make proper use of C# data structures and functionality.
-- Add that third dimension; Replace 2D with 3D. This should not affect the 2D demos as the z-plane is simply ignored. 
-- Make a demo Steering application using Mogre (http://www.ogre3d.org/wiki/index.php/MOGRE) for the rendering.
+- Add a new seperate project as a demo Steering application using Mogre (http://www.ogre3d.org/wiki/index.php/MOGRE) for the rendering.
 - Add further AI ports, initially more of Mat Buckland's code ported to C#.
 
 

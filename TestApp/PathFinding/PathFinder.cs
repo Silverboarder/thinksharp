@@ -124,7 +124,7 @@ namespace TestApp
 
             m_ThickBlack = new Pen(Color.Black, 2);
             m_ThickBlue = new Pen(Color.Blue, 2);
-            m_font = new Font("Arial", 9, FontStyle.Regular);
+            m_font = new Font("Arial", 8, FontStyle.Regular);
         }
 
         public bool ShowGraph
@@ -397,7 +397,7 @@ namespace TestApp
                     SearchAlgo = new Graph_SearchAStar(m_Graph, m_iSourceCell, m_iTargetCell, EuclidianDistance);
                     break;
 
-
+                default:
                     throw new Exception("<PathFinder::CreateSearchPath>: algorithm_type does not exist");
             }
 

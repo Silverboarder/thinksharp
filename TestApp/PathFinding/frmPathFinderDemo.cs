@@ -19,6 +19,9 @@ namespace TestApp
         private bool m_blnIsLoading, m_blnMouseDown;
         private int m_intMouseGridIndex;
 
+        private const int CELLS_UP = 26;
+        private const int CELLS_DOWN = 26; 
+
         public frmPathFinderDemo()
         {
             InitializeComponent();
@@ -42,7 +45,7 @@ namespace TestApp
             mBuffer1.Graphics.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAliasGridFit;
 
             m_Pathfinder = new PathFinder();
-            m_Pathfinder.InitialiseGraph(20, 20, pnlViewPort.Width, pnlViewPort.Height);
+            m_Pathfinder.InitialiseGraph(CELLS_UP, CELLS_DOWN, pnlViewPort.Width, pnlViewPort.Height);
             m_Pathfinder.InitialiseSourceTargetIndexes();
 
             m_Pathfinder.ShowGraph = MenuGraph.Checked;
@@ -192,7 +195,7 @@ namespace TestApp
                 case "New":
 
                     ResetButtonAlgos();
-                    m_Pathfinder.InitialiseGraph(20, 20, pnlViewPort.Width, pnlViewPort.Height);
+                    m_Pathfinder.InitialiseGraph(CELLS_UP, CELLS_DOWN, pnlViewPort.Width, pnlViewPort.Height);
                     m_Pathfinder.InitialiseSourceTargetIndexes();
                     toolStripStatusLabel1.Text = "New default graph loaded";
                     break;

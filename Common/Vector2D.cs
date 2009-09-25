@@ -180,7 +180,9 @@ namespace ThinkSharp.Common
 
         //------------------------ ProjectedPerp ---------------------------------
         //
-        //  Returns a vector perpendicular to the origin, projected out by radius
+        //  Returns a vector perpendicular to the given direction, projected out 
+        //  by radius amount from the origin. The new perpendicular direction 
+        //  points to the left if swapHand is true, and to the right otherwise.
         //------------------------------------------------------------------------
         public static Vector2D ProjectedPerp(Vector2D origin, Vector2D DirNormal, double radius, bool swapHand)
         {
