@@ -15,8 +15,8 @@ namespace ThinkSharp.Steering
         const double WanderDist = 2.0;
         //the maximum amount of displacement along the circle each frame
         const double WanderJitterPerSec = 80.0;
-        //used in path following
-        const double WaypointSeekDist = 20;
+        
+        const double WaypointSeekDist = 3;
 
         public enum summing_method { weighted_average, prioritized, dithered };
 
