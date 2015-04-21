@@ -1,0 +1,1 @@
+This is a collection of AI projects written in C# and ported from the C++ Steering modules that accompany the "Programming Game AI by Example" book by Mat Buckland.
